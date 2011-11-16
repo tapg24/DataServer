@@ -1,0 +1,48 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: MultiPort - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x404 /fo"Release/MultiPort.res" /d "NDEBUG" /d "_AFXDLL" "E:\NPort2G\Nport utility\NPort1.6正式版\NPsetup\IpSerial\Examples\vc\MultiPort\MultiPort.rc"" 
+Creating temporary file "C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP8A.tmp" with contents
+[
+/nologo /MD /W3 /GX /O2 /I "..\..\..\Lib\\" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Fp"Release/MultiPort.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
+"E:\NPort2G\Nport utility\NPort1.6正式版\NPsetup\IpSerial\Examples\vc\MultiPort\MultiPort.cpp"
+"E:\NPort2G\Nport utility\NPort1.6正式版\NPsetup\IpSerial\Examples\vc\MultiPort\MultiPortDlg.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP8A.tmp" 
+Creating temporary file "C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP8B.tmp" with contents
+[
+/nologo /MD /W3 /GX /O2 /I "..\..\..\Lib\\" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Fp"Release/MultiPort.pch" /Yc"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
+"E:\NPort2G\Nport utility\NPort1.6正式版\NPsetup\IpSerial\Examples\vc\MultiPort\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP8B.tmp" 
+Creating temporary file "C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP8C.tmp" with contents
+[
+..\..\..\Lib\x86\IPSerial.Lib /nologo /subsystem:windows /incremental:no /pdb:"Release/MultiPort.pdb" /machine:I386 /out:"Release/MultiPort.exe" 
+".\Release\MultiPort.obj"
+".\Release\MultiPortDlg.obj"
+".\Release\StdAfx.obj"
+".\Release\MultiPort.res"
+]
+Creating command line "link.exe @C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP8C.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+MultiPort.cpp
+MultiPortDlg.cpp
+Generating Code...
+Linking...
+
+
+
+<h3>Results</h3>
+MultiPort.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

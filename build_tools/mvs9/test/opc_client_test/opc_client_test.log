@@ -1,0 +1,413 @@
+1 [2011-Nov-03 11:55:33.431217] [00157CB8] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+1 [2011-Nov-03 11:57:07.680011] [00157CB8] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+1 [2011-Nov-03 11:59:22.537659] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+1 [2011-Nov-03 12:03:15.472178] [001589A0] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+1 [2011-Nov-03 12:05:40.985940] [001589A0] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+1 [2011-Nov-03 12:06:16.547985] [001589A0] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+1 [2011-Nov-03 12:10:55.403791] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+1 [2011-Nov-03 12:11:32.403317] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+1 [2011-Nov-03 13:13:52.705705] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 13:13:52.736948] [00157448] [trace] ChannelOPC::AddItems
+1 [2011-Nov-03 13:25:35.002599] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 13:25:35.033848] [00157448] [trace] ChannelOPC::AddItems
+1 [2011-Nov-03 13:27:22.358151] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 13:27:22.389400] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 13:27:23.498747] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 13:27:23.514371] [00157448] [trace] Канал server Добавлено 1 тегов.
+1 [2011-Nov-03 13:29:10.917872] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 13:29:10.933496] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 13:29:10.995995] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 13:29:11.011619] [00157448] [trace] Канал server Добавлено 1 тегов.
+5 [2011-Nov-03 13:29:11.027244] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-03 13:31:10.586683] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 13:31:10.617932] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 13:31:10.696055] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 13:31:10.711680] [00157448] [trace] Канал server Добавлено 1 тегов.
+5 [2011-Nov-03 13:31:10.711680] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-03 13:33:28.489976] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 13:33:28.521225] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 13:33:28.568099] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 13:33:28.568099] [00157448] [trace] Канал server Добавлено 1 тегов.
+5 [2011-Nov-03 13:33:28.568099] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-03 13:45:40.666757] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 13:45:40.713631] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 13:45:40.744881] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 13:45:40.760506] [00157448] [trace] Канал server Добавлено 1 тегов.
+5 [2011-Nov-03 13:45:40.760506] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-03 13:46:26.650543] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 13:46:26.713043] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 13:46:26.759917] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 13:46:26.775542] [00157448] [trace] Канал server Добавлено 1 тегов.
+5 [2011-Nov-03 13:46:26.775542] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-03 13:48:58.257978] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 13:48:58.304852] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 13:48:58.351727] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 13:48:58.367351] [00157448] [trace] Канал server Добавлено 1 тегов.
+5 [2011-Nov-03 13:48:58.367351] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-03 13:51:47.880807] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 13:51:47.943306] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 13:51:47.958931] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 13:51:47.974555] [00157448] [trace] Канал server Добавлено 3 тегов.
+5 [2011-Nov-03 13:51:47.974555] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-03 13:52:34.005216] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 13:52:34.036466] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 13:52:34.083340] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 13:52:34.083340] [00157448] [warning] Канал server Тег [OPC_1.0000001.CMD1] на сервере не найден. Ошибка: -1073479673
+5 [2011-Nov-03 13:52:34.098965] [00157448] [trace] Канал server Добавлено 2 тегов.
+6 [2011-Nov-03 13:52:34.098965] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-03 14:08:03.743315] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 14:08:03.774565] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 14:08:03.805815] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 14:08:03.805815] [00157448] [warning] Канал server Тег [OPC_1.0000001.CMD1] на сервере не найден. Ошибка: -1073479673
+5 [2011-Nov-03 14:08:03.821439] [00157448] [trace] Канал server Добавлено 2 тегов.
+6 [2011-Nov-03 14:08:03.821439] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-03 14:27:53.884331] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 14:27:53.931206] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 14:27:53.946831] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 14:27:53.962455] [00157448] [trace] Канал server Добавлено 3 тегов.
+5 [2011-Nov-03 14:27:53.962455] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-03 14:30:17.054374] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 14:30:17.101248] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 14:30:17.132498] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 14:30:17.163747] [00157448] [trace] Канал server Добавлено 3 тегов.
+5 [2011-Nov-03 14:30:17.163747] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-03 16:02:49.577051] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-03 16:02:49.623925] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-03 16:02:49.655175] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-03 16:02:49.670799] [00157448] [trace] Канал server Добавлено 3 тегов.
+5 [2011-Nov-03 16:02:49.670799] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-07 10:06:06.475746] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-07 10:06:06.553869] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-07 10:06:06.585119] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-07 10:06:06.600743] [00157448] [trace] Канал server Добавлено 3 тегов.
+5 [2011-Nov-07 10:06:06.616368] [00157448] [trace] ChannelOPC::Disconnect
+1 [2011-Nov-09 13:28:57.424546] [00158970] [error] 
+-----------------------------------
+An exception has been thrown!
+Details:
+-----------------------------------
+Description: Error while opening the main configuration file.
+Function name: Core::ProjectMgr::GetProjectFilename. 
+-----------------------------------
+
+File: d:\vs_proj\dataserver\dependency\dataserverengine\src\core\project_mgr.cpp
+Line: 46
+Stack unwinding:
+Core::ProjectMgr::GetProjectFilename <= Core::ProjectMgr::LoadProject <= << beginning of stack >>
+
+2 [2011-Nov-09 13:28:57.502626] [00157448] [trace] ChannelOPC::Connect
+3 [2011-Nov-09 13:28:57.549474] [00157448] [trace] ChannelOPC::AddItems
+4 [2011-Nov-09 13:28:57.565090] [00157448] [trace] Канал server Добавлено 3 тегов.
+5 [2011-Nov-09 13:28:57.565090] [00157448] [trace] ChannelOPC::Disconnect

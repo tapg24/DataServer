@@ -1,0 +1,337 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (Taiwan) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL
+#pragma code_page(950)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 4, 1\r\n"
+    "#pragma code_page(950)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\SinglePort.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""l.cht\\afxres.rc""          // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\SinglePort.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "關於 SinglePort"
+FONT 9, "新細明體"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "SinglePort Version 1.0",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright (C) 2002",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "確定",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_SINGLEPORT_DIALOG DIALOGEX 0, 0, 320, 229
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "SinglePort"
+FONT 9, "新細明體"
+BEGIN
+    EDITTEXT        IDC_SERVER_IP,64,19,84,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PORT,190,19,40,14,ES_RIGHT | ES_AUTOHSCROLL
+    COMBOBOX        IDC_BAUD_RATE,64,54,48,117,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    COMBOBOX        IDC_DATA_BITS,169,54,48,106,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_STOP_BITS,64,71,48,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    COMBOBOX        IDC_PARITY,169,71,48,103,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    COMBOBOX        IDC_FLOW_CONTROL,64,88,60,79,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "ON",IDC_DTR_ON,"Button",BS_AUTORADIOBUTTON | WS_GROUP,
+                    37,106,27,10
+    CONTROL         "OFF",IDC_DTR_OFF,"Button",BS_AUTORADIOBUTTON,66,106,29,
+                    10
+    CONTROL         "ON",IDC_RTS_ON,"Button",BS_AUTORADIOBUTTON | WS_GROUP,
+                    155,106,27,10
+    CONTROL         "OFF",IDC_RTS_OFF,"Button",BS_AUTORADIOBUTTON,183,106,29,
+                    10
+    EDITTEXT        IDC_TRANSCEIVER,7,126,245,69,ES_MULTILINE | WS_VSCROLL | 
+                    WS_HSCROLL
+    PUSHBUTTON      "Open",IDC_OPEN,263,14,50,14
+    PUSHBUTTON      "Close",IDC_CLOSE,263,32,50,14
+    PUSHBUTTON      "Reset Port",IDC_RESET_PORT,263,50,50,14
+    PUSHBUTTON      "Reset Server",IDC_RESET_SERVER,263,68,50,14
+    PUSHBUTTON      "Check Alive",IDC_CHECK_ALIVE,263,86,50,14
+    PUSHBUTTON      "Send Break",IDC_SEND_BREAK,263,122,50,14
+    DEFPUSHBUTTON   "確定",IDOK,263,189,50,14,NOT WS_VISIBLE | WS_DISABLED
+    PUSHBUTTON      "Exit",IDCANCEL,263,208,50,14
+    LTEXT           "Server IP : ",IDC_STATIC,14,22,36,8
+    LTEXT           "Port : ",IDC_STATIC,160,22,20,8
+    LTEXT           "Baud Rate : ",IDC_STATIC,14,56,40,8
+    LTEXT           "Stop bits : ",IDC_STATIC,14,73,34,8
+    LTEXT           "Flow Control : ",IDC_STATIC,14,90,48,8
+    GROUPBOX        "Options",IDC_STATIC,7,7,245,30,BS_CENTER
+    LTEXT           "Data bits : ",IDC_STATIC,132,56,34,8
+    LTEXT           "Parity : ",IDC_STATIC,132,73,25,8
+    LTEXT           "DTR : ",IDC_STATIC,14,107,22,8
+    LTEXT           "RTS : ",IDC_STATIC,132,107,21,8
+    GROUPBOX        "Status",IDC_STATIC,7,199,245,23,BS_CENTER
+    LTEXT           "CTS : ",IDC_STATIC,15,209,21,8
+    LTEXT           "DSR : ",IDC_STATIC,73,209,22,8
+    LTEXT           "DCD : ",IDC_STATIC,132,209,23,8
+    GROUPBOX        "Parameter",IDC_STATIC,7,41,245,81,BS_CENTER
+    LTEXT           "Break : ",IDC_STATIC,192,209,26,8
+    EDITTEXT        IDC_CTS_CTRL,42,206,19,14,ES_AUTOHSCROLL | WS_DISABLED | 
+                    NOT WS_TABSTOP
+    EDITTEXT        IDC_DSR_CTRL,96,206,19,14,ES_AUTOHSCROLL | WS_DISABLED | 
+                    NOT WS_TABSTOP
+    EDITTEXT        IDC_DCD_CTRL,155,206,19,14,ES_AUTOHSCROLL | WS_DISABLED | 
+                    NOT WS_TABSTOP
+    EDITTEXT        IDC_BREAK_CTRL,218,206,19,14,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER | WS_DISABLED | NOT WS_TABSTOP
+    PUSHBUTTON      "Data Status",IDC_DATA_STATUS,263,141,50,14,WS_DISABLED
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040404B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "SinglePort MFC Application\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "SinglePort\0"
+            VALUE "LegalCopyright", "Copyright (C) 2002\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "SinglePort.EXE\0"
+            VALUE "ProductName", "SinglePort Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x404, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_SINGLEPORT_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 313
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 222
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_SINGLEPORT_DIALOG DLGINIT
+BEGIN
+    IDC_BAUD_RATE, 0x403, 3, 0
+0x3035, "\000" 
+    IDC_BAUD_RATE, 0x403, 3, 0
+0x3537, "\000" 
+    IDC_BAUD_RATE, 0x403, 4, 0
+0x3131, 0x0030, 
+    IDC_BAUD_RATE, 0x403, 4, 0
+0x3331, 0x0034, 
+    IDC_BAUD_RATE, 0x403, 4, 0
+0x3531, 0x0030, 
+    IDC_BAUD_RATE, 0x403, 4, 0
+0x3033, 0x0030, 
+    IDC_BAUD_RATE, 0x403, 4, 0
+0x3036, 0x0030, 
+    IDC_BAUD_RATE, 0x403, 5, 0
+0x3231, 0x3030, "\000" 
+    IDC_BAUD_RATE, 0x403, 5, 0
+0x3432, 0x3030, "\000" 
+    IDC_BAUD_RATE, 0x403, 5, 0
+0x3834, 0x3030, "\000" 
+    IDC_BAUD_RATE, 0x403, 5, 0
+0x3237, 0x3030, "\000" 
+    IDC_BAUD_RATE, 0x403, 5, 0
+0x3639, 0x3030, "\000" 
+    IDC_BAUD_RATE, 0x403, 6, 0
+0x3931, 0x3032, 0x0030, 
+    IDC_BAUD_RATE, 0x403, 6, 0
+0x3833, 0x3034, 0x0030, 
+    IDC_BAUD_RATE, 0x403, 6, 0
+0x3735, 0x3036, 0x0030, 
+    IDC_BAUD_RATE, 0x403, 7, 0
+0x3131, 0x3235, 0x3030, "\000" 
+    IDC_BAUD_RATE, 0x403, 7, 0
+0x3332, 0x3430, 0x3030, "\000" 
+    IDC_BAUD_RATE, 0x403, 7, 0
+0x3634, 0x3830, 0x3030, "\000" 
+    IDC_BAUD_RATE, 0x403, 7, 0
+0x3239, 0x3631, 0x3030, "\000" 
+    IDC_DATA_BITS, 0x403, 2, 0
+0x0035, 
+    IDC_DATA_BITS, 0x403, 2, 0
+0x0036, 
+    IDC_DATA_BITS, 0x403, 2, 0
+0x0037, 
+    IDC_DATA_BITS, 0x403, 2, 0
+0x0038, 
+    IDC_STOP_BITS, 0x403, 2, 0
+0x0031, 
+    IDC_STOP_BITS, 0x403, 2, 0
+0x0032, 
+    IDC_PARITY, 0x403, 5, 0
+0x6f4e, 0x656e, "\000" 
+    IDC_PARITY, 0x403, 5, 0
+0x7645, 0x6e65, "\000" 
+    IDC_PARITY, 0x403, 4, 0
+0x644f, 0x0064, 
+    IDC_PARITY, 0x403, 5, 0
+0x614d, 0x6b72, "\000" 
+    IDC_PARITY, 0x403, 6, 0
+0x7053, 0x6361, 0x0065, 
+    IDC_FLOW_CONTROL, 0x403, 5, 0
+0x6f4e, 0x656e, "\000" 
+    IDC_FLOW_CONTROL, 0x403, 8, 0
+0x5452, 0x2f53, 0x5443, 0x0053, 
+    IDC_FLOW_CONTROL, 0x403, 9, 0
+0x6f58, 0x2f6e, 0x6f58, 0x6666, "\000" 
+    IDC_FLOW_CONTROL, 0x403, 5, 0
+0x6f42, 0x6874, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "關於 SinglePort(&A)..."
+END
+
+#endif    // Chinese (Taiwan) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)
+#ifdef _WIN32
+LANGUAGE 4, 1
+#pragma code_page(950)
+#endif //_WIN32
+#include "res\SinglePort.rc2"  // non-Microsoft Visual C++ edited resources
+#include "l.cht\afxres.rc"          // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

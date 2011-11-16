@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OPCClientToolKit", "opc_client\OPCClientToolKit.vcproj", "{169E1B60-878B-4237-95FF-065DD5F36180}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{169E1B60-878B-4237-95FF-065DD5F36180}.Debug|Win32.ActiveCfg = Debug|Win32
+		{169E1B60-878B-4237-95FF-065DD5F36180}.Debug|Win32.Build.0 = Debug|Win32
+		{169E1B60-878B-4237-95FF-065DD5F36180}.Release|Win32.ActiveCfg = Release|Win32
+		{169E1B60-878B-4237-95FF-065DD5F36180}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

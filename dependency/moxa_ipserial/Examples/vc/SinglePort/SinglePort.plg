@@ -1,0 +1,51 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: SinglePort - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x404 /fo"Release/SinglePort.res" /d "NDEBUG" /d "_AFXDLL" "E:\NPort2G\Nport utility\NPort1.5正式版\NPsetup\IpSerial\Examples\vc\SinglePort\SinglePort.rc"" 
+Creating temporary file "C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP65.tmp" with contents
+[
+/nologo /MD /W3 /GX /O2 /I "..\..\..\Lib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Fp"Release/SinglePort.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
+"E:\NPort2G\Nport utility\NPort1.5正式版\NPsetup\IpSerial\Examples\vc\SinglePort\InfoDlg.cpp"
+"E:\NPort2G\Nport utility\NPort1.5正式版\NPsetup\IpSerial\Examples\vc\SinglePort\SinglePort.cpp"
+"E:\NPort2G\Nport utility\NPort1.5正式版\NPsetup\IpSerial\Examples\vc\SinglePort\SinglePortDlg.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP65.tmp" 
+Creating temporary file "C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP66.tmp" with contents
+[
+/nologo /MD /W3 /GX /O2 /I "..\..\..\Lib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Fp"Release/SinglePort.pch" /Yc"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
+"E:\NPort2G\Nport utility\NPort1.5正式版\NPsetup\IpSerial\Examples\vc\SinglePort\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP66.tmp" 
+Creating temporary file "C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP67.tmp" with contents
+[
+..\..\..\Lib\IPSerial.Lib /nologo /subsystem:windows /incremental:no /pdb:"Release/SinglePort.pdb" /machine:I386 /out:"Release/SinglePort.exe" 
+".\Release\InfoDlg.obj"
+".\Release\SinglePort.obj"
+".\Release\SinglePortDlg.obj"
+".\Release\StdAfx.obj"
+".\Release\SinglePort.res"
+]
+Creating command line "link.exe @C:\DOCUME~1\TERENC~1\LOCALS~1\Temp\RSP67.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+InfoDlg.cpp
+SinglePort.cpp
+SinglePortDlg.cpp
+Generating Code...
+Linking...
+
+
+
+<h3>Results</h3>
+SinglePort.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

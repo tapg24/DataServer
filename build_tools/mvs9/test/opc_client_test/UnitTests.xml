@@ -1,0 +1,4 @@
+<TestLog><TestSuite name="DataServerEngine"><TestCase name="opc_channel"><Exception file="unknown location" line="0"><![CDATA[
+This application has requested the Runtime to terminate it in an unusual way.
+Please contact the application's support team for more information.
+]]></Exception><TestingTime>94000</TestingTime></TestCase></TestSuite></TestLog>
