@@ -12,7 +12,7 @@ namespace Channels
 {
 	namespace Modbus
 	{
-		class Sirius2Old : public DeviceBase
+		class Sirius2Old : public ModbusDeviceBase
 		{
 			// информация об устройстве
 			string_t deviceId_;
@@ -60,7 +60,7 @@ namespace Channels
 			void DoDataRequest(boost::shared_ptr<StreamRTU>& stream);
 
 		public:
-			Sirius2Old(boost::shared_ptr<Channel>& parent, const string_t& deviceId, const int32_t deviceType, const int32_t serialId, const int32_t modbusId, const bool calc);
+			Sirius2Old(ChannelWPtr parent, const string_t& deviceId, const int32_t deviceType, const int32_t serialId, const int32_t modbusId, const bool calc);
 			~Sirius2Old();
 
 			void SetIdentityRequest(const RequestRTU& request);

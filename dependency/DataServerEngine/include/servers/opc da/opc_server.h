@@ -6,6 +6,8 @@
 #include "channels/channel_base.h"
 #include "entries/entries_mgr.h"
 #include "utils/active_object.hpp"
+#include "channels/channel_mgr_fwd.h"
+#include "channels/cache_mgr_fwd.h"
 
 #include <string>
 #include <map>
@@ -45,7 +47,7 @@ namespace Servers
 
 		class OPCServer : public ActiveObject, boost::noncopyable
 		{
-			void __OnChannelStateChange(const uint32_t id, Channels::ChannelState state);
+			void __OnChannelStateChange(const Channels::ChannelInfo info);
 			void __UpdateNotify(const std::list<string_t>& clientTagList);
 
 		public:
@@ -59,7 +61,7 @@ namespace Servers
 			boost::signals2::connection Bind(const ItemAddedSlot& slot);
 
 			bool AddBranch(const string_t& tagName);
-			bool AddTag(const string_t& tagName, const frl::os::win32::com::Variant& tagValue);
+			bool AddTag(const string_t& name, const ComVariant& value);
 			void GetAllLeafs(std::vector<string_t>& namesList, const DWORD accessFilter);
 			frl::opc::address_space::Tag* GetTag(string_t fullPath);
 			long GetItemCount() const;

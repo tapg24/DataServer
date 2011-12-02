@@ -7,6 +7,7 @@
 #include <wx/button.h>
 
 #include "../dependency/DataServerEngine/include/utils/string.h"
+#include "../dependency/DataServerEngine/include/servers/opc da/opc_server_fwd.h"
 
 #include <vector>
 #include <map>
@@ -31,7 +32,6 @@ public:
 
 	wxString OnGetItemText(long item, long column) const;
 	wxListItemAttr* OnGetItemAttr(long item) const;
-	void OnEraseBackground(wxEraseEvent & event);
 	wxString GetCellContentsString( long row_number, int column );
 	void Refresh(wxTimerEvent& event);
 	void OnItemSelected(wxListEvent& event);
@@ -43,6 +43,8 @@ public:
 	boost::signals2::connection BindTo_OnItemSelected(boost::function<void(const string_t&)> slot);
 
 private:
+	void OnEraseBackground(wxEraseEvent & event);
+
 	OPCServerWPtr opcServer_;
 	std::vector<string_t> allNames_;
 	std::vector<string_t> filtredNames_;

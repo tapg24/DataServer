@@ -1,15 +1,15 @@
 #include "servers/opc da/opc_server.h"
+
 #include "core/project_mgr.h"
-#include "core/state_checker.h"
-//#include "core/bit_checker.h"
-#include "channels/channel_mgr.h"
 #include "channels/cache_item.h"
+#include "channels/cache_mgr.h"
+#include "channels/channel_mgr.h"
+#include "channels/channel_mgr.h"
 #include "entries/entry.h"
-#include "entries/default_entry.h"
-#include "entries/ts_entry.h"
-#include "entries/ts_def.h"
+#include "entries/entry_factory.h"
 #include "utils/locale.hpp"
 #include "utils/variant.h"
+#include "utils/json_variant_helper.h"
 
 #include <bitset>
 #include <boost/typeof/typeof.hpp>
@@ -46,7 +46,7 @@ namespace Servers
 			SetAdressSpaceData(adressspace);
 
 			cache_connection_ = projectMgr::getInstance().GetCacheMgr()->Bind( boost::bind(&OPCServer::__UpdateNotify, this, _1) );
-			channel_connection_ = projectMgr::getInstance().GetChannelMgr()->Bind( boost::bind(&OPCServer::__OnChannelStateChange, this, _1, _2) );
+			channel_connection_ = projectMgr::getInstance().GetChannelMgr()->Bind( boost::bind(&OPCServer::__OnChannelStateChange, this, _1) );
 		}
 
 		OPCServer::~OPCServer()
@@ -91,30 +91,25 @@ namespace Servers
 			}
 		}
 
-		void OPCServer::__OnChannelStateChange(const uint32_t id, Channels::ChannelState state)
+		void OPCServer::__OnChannelStateChange(const Channels::ChannelInfo info)
 		{
-			Channels::Channel* channel = projectMgr::getInstance().GetChannelMgr()->GetElseNull(id);
-			if ( channel == NULL ) return;
-
-			string_t name = "System.Channels." + channel->GetName();
-
-			switch(state)
+			switch( info.state )
 			{
 			case Channels::Connected:
 				{
-					if ( frl::opc::opcAddressSpace::getInstance().isExistTag(name) )
+					if ( frl::opc::opcAddressSpace::getInstance().isExistTag(info.name) )
 					{
-						frl::opc::address_space::Tag* tag = opcAddressSpace::getInstance().getTag(name);
-						tag->write( Channels::ComVariant(true).getConstRef() );
+						frl::opc::address_space::Tag* tag = opcAddressSpace::getInstance().getTag(info.name);
+						tag->write( ComVariant(true).getConstRef() );
 					}
 					break;
 				}
 			case Channels::Disconnected:
 				{
-					if ( frl::opc::opcAddressSpace::getInstance().isExistTag(name) )
+					if ( frl::opc::opcAddressSpace::getInstance().isExistTag(info.name) )
 					{
-						frl::opc::address_space::Tag* tag = opcAddressSpace::getInstance().getTag(name);
-						tag->write( Channels::ComVariant(false).getConstRef() );
+						frl::opc::address_space::Tag* tag = opcAddressSpace::getInstance().getTag(info.name);
+						tag->write( ComVariant(false).getConstRef() );
 					}
 					break;
 				}
@@ -159,19 +154,19 @@ namespace Servers
 			}
 		}
 
-		bool OPCServer::AddTag( const string_t & tagName, const frl::os::win32::com::Variant& tagValue )
+		bool OPCServer::AddTag(const string_t& name, const ComVariant& value)
 		{
 			try
 			{
 				address_space::Tag *tag = NULL;
 
-				tag = opcAddressSpace::getInstance().addLeaf( tagName, true);
+				tag = opcAddressSpace::getInstance().addLeaf( name, true);
 				tag->subscribeToBeforeOpcClientChange( boost::function< bool( const address_space::Tag* const ) >( boost::bind( &OPCServer::OnBeforeDataChange, this, _1 ) ) );
 				tag->subscribeToOpcChange( boost::function< void( const address_space::Tag* const ) >( boost::bind( &OPCServer::OnDataChange, this, _1 ) ) );
 				tag->isWritable( true );
 				//tag->write( tagValue );
-				tag->writeFromOPCClient( tagValue );
-				ItemAddedEvt event(tagName);
+				tag->writeFromOPCClient( value.getConstRef() );
+				ItemAddedEvt event(name);
 				onItemAdded_.Invoke( event );
 				return true;
 			}
@@ -220,88 +215,57 @@ namespace Servers
 				int size = data_.size();
 				for ( size_t idx = 0; idx < data_.size(); ++idx )
 				{
-					// NAME
-					string_t name = data_[idx]["name"].asString();
-					// CONVERT
-					const Json::Value convert = data_[idx]["convert"];
-					
-					// GROUP
-					string_t group = data_[idx]["group"].asString();
-					if ( group == "TS" )
+					const Json::Value& item = data_[idx];
+
+					string_t item_name = item["name"].asString();
+					string_t group_name = item["group"].asString();
+
+					if ( !item["descr"].isNull() )
 					{
-						Channels::ComVariant value;
-						value = static_cast<WORD>(data_[idx]["value"].asUInt());
-						string_t ts_name = name + "_TS";
-						string_t ts_cmd = ts_name + "_CMD";
-						string_t ts_descr = ts_name + "_DESCR";
-						Channels::EntryTsPtr entry( new Channels::EntryTS(ts_name, convert) );
-						entriesMgr.AddEntry(entry);
-						AddTag(ts_name, value.getConstRef());
-						AddTag(ts_descr, Channels::ComVariant( data_[idx].get("descr", "").asString() ).getConstRef());
-						AddTag(ts_cmd, Channels::ComVariant( (uint16_t)0 ).getConstRef() );
+						string_t item_descr = item_name + "_DESCR";
+						AddTag(item_descr, JsonHelper::GetComVariant(item["descr"], VT_BSTR));
 					}
-					else if ( group == "default" )
+
+					if ( group_name == "terminal" )
 					{
-						Channels::ComVariant value;
-						// TYPE
-						VARTYPE type = static_cast<VARTYPE>(data_[idx]["type"].asInt());
-						// VALUE
-						switch (type)
+						// vars
+						if ( !item["vars"].isNull() )
 						{
-						case 4: // float
-							value = static_cast<float>(data_[idx]["value"].asDouble());
-							break;
-						case 8: // string
-							value = data_[idx]["value"].asString();
-							break;
-						case 11: // bool
-							value = data_[idx]["value"].asBool();
-							break;
-						case 18: // word
-							value = static_cast<WORD>(data_[idx]["value"].asUInt());
-							break;
-						default:
-							throw std::runtime_error(str( boost::format("type not exists. index - %1% name - %2% type - %3%") % idx % name % type ));
-							break;
+							const Json::Value& vars = item["vars"];
+							for ( size_t idx_var = 0; idx_var < vars.size(); ++idx_var )
+							{
+								const Json::Value& var = vars[idx_var];
+								string_t var_name = item_name + "_" + var["name"].asString();
+								
+								Channels::EntryPtr var_entry = Channels::EntryFactory::Create(var_name, var);
+								entriesMgr.AddEntry(var_entry);
+								AddTag(var_name, JsonHelper::GetComVariant(var["dump"], var["type"]));
+								
+								if ( !var["unit"].isNull() )
+								{
+									const Json::Value& unit = var["unit"];
+									string_t var_unit = var_name + "_UNIT";
+									Channels::EntryPtr unit_entry = Channels::EntryFactory::Create(var_unit, unit);
+									entriesMgr.AddEntry(unit_entry);
+									AddTag(var_unit, JsonHelper::GetComVariant(unit["dump"], VT_BSTR));
+								}
+
+								if ( !var["descr"].isNull() )
+								{
+									const Json::Value& descr = var["descr"];
+									string_t var_descr = var_name + "_DESCR";
+									AddTag(var_descr, JsonHelper::GetComVariant(descr, VT_BSTR));
+								}
+							}
 						}
-						Channels::DefaultEntryPtr entry( new Channels::DefaultEntry(name, convert) );
-						entriesMgr.AddEntry(entry);
-						AddTag(entry->GetName(), value.getConstRef());
-						string_t descr = name + "_DESCR";
-						AddTag(descr, Channels::ComVariant( data_[idx].get("descr", "").asString() ).getConstRef());
-						// UNIT
-						string_t unit = name + "_UNIT";
-						AddTag(unit, Channels::ComVariant( data_[idx]["unit"].asString() ).getConstRef());
 					}
-					else if ( group == "system" )
+					else if ( group_name == "system" )
 					{
-						Channels::ComVariant value;
-						// TYPE
-						VARTYPE type = static_cast<VARTYPE>(data_[idx]["type"].asInt());
-						// VALUE
-						switch (type)
-						{
-						case 4: // float
-							value = static_cast<float>(data_[idx]["value"].asDouble());
-							break;
-						case 8: // string
-							value = data_[idx]["value"].asString();
-							break;
-						case 11: // bool
-							value = data_[idx]["value"].asBool();
-							break;
-						case 18: // word
-							value = static_cast<WORD>(data_[idx]["value"].asUInt());
-							break;
-						default:
-							throw std::runtime_error(str( boost::format("type not exists. index - %1% name - %2% type - %3%") % idx % name % type ));
-							break;
-						}
-						AddTag(name, value.getConstRef());
+						AddTag(item_name, JsonHelper::GetComVariant(item["dump"], item["type"]));
 					}
-					else if ( group == "system.connections" )
+					else if ( group_name == "system.connections" )
 					{
-						AddTag(name, Channels::ComVariant(false).getConstRef());
+						AddTag(item_name, ComVariant(false));
 					}
 					else
 					{
@@ -320,47 +284,78 @@ namespace Servers
 
 			LocaleSaveRestore_C c;
 
-			int size = data_.size();
+			const int size = data_.size();
 			for ( size_t idx = 0; idx < data_.size(); ++idx )
 			{
-				string_t name = data_[idx]["name"].asString();
-				if ( data_[idx]["group"].asString() == "TS")
-				{
-					name.append("_TS");
-				}
-				
-				frl::opc::address_space::Tag* tag = NULL;
+				Json::Value& item = data_[idx];
 
-				try
+				const string_t item_name = item["name"].asString();
+				const string_t group_name = item["group"].asString();
+
+				if ( !item["descr"].isNull() )
 				{
-					tag = frl::opc::opcAddressSpace::getInstance().getTag( name );
-				}
-				catch(const frl::opc::address_space::Tag::NotExistTag& ex)
-				{
-					BOOST_LOG_TRIVIAL(error) << ex.getFullDescription();
-					continue;
+					string_t item_descr = item_name + "_DESCR";
+					if ( frl::opc::opcAddressSpace::getInstance().isExistTag( item_descr ) )
+					{
+						const ComVariant value = (VARIANT&)frl::opc::opcAddressSpace::getInstance().getTag( item_descr )->read();
+						JsonHelper::copy(value, item["descr"]);
+					}
+					else BOOST_LOG_TRIVIAL(error) << item_descr << " " << __T("не существует");
 				}
 
-				VARIANT variant = tag->read();
-				Channels::ComVariant var( variant );
-
-				switch (var.getType())
+				if ( group_name == "terminal" )
 				{
-				case VT_R4: // float
-					data_[idx]["value"] = var.AsFloat();
-					break;
-				case VT_BSTR: // string
-					data_[idx]["value"] = var.AsString();
-					break;
-				case VT_BOOL: // bool
-					data_[idx]["value"] = var.AsBool();
-					break;
-				case VT_UI2: // word
-					data_[idx]["value"] = var.AsUShort();
-					break;
-				default:
-					//throw std::runtime_error(str( boost::format("type not exists. index - %1% name - %2% type - %3%") % idx % name % type ));
-					break;
+					// vars
+					if ( !item["vars"].isNull() )
+					{
+						Json::Value& vars = item["vars"];
+						for ( size_t idx_var = 0; idx_var < vars.size(); ++idx_var )
+						{
+							Json::Value& var = vars[idx_var];
+
+							const string_t var_name = item_name + "_" + var["name"].asString();
+							if ( frl::opc::opcAddressSpace::getInstance().isExistTag( var_name ) )
+							{
+								const ComVariant value = (VARIANT&)frl::opc::opcAddressSpace::getInstance().getTag( var_name )->read();
+								JsonHelper::copy(value, var["dump"]);
+							}
+							else BOOST_LOG_TRIVIAL(error) << var_name << " " << __T("не существует");
+
+							if ( !var["unit"].isNull() )
+							{
+								const string_t var_unit = var_name + "_UNIT";
+								if ( frl::opc::opcAddressSpace::getInstance().isExistTag( var_unit ) )
+								{
+									const ComVariant value = (VARIANT&)frl::opc::opcAddressSpace::getInstance().getTag( var_unit )->read();
+									JsonHelper::copy(value, var["unit"]["dump"]);
+								}
+								else BOOST_LOG_TRIVIAL(error) << var_unit << " " << __T("не существует");
+							}
+
+							if ( !var["descr"].isNull() )
+							{
+								const string_t var_descr = var_name + "_DESCR";
+								if ( frl::opc::opcAddressSpace::getInstance().isExistTag( var_descr ) )
+								{
+									const ComVariant value = (VARIANT&)frl::opc::opcAddressSpace::getInstance().getTag( var_descr )->read();
+									JsonHelper::copy(value, var["descr"]);
+								}
+								else BOOST_LOG_TRIVIAL(error) << var_descr << " " << __T("не существует");
+							}
+						}
+					}
+				}
+				else if ( group_name == "system" )
+				{
+					if ( frl::opc::opcAddressSpace::getInstance().isExistTag( item_name ) )
+					{
+						const ComVariant value = (VARIANT&)frl::opc::opcAddressSpace::getInstance().getTag( item_name )->read();
+						JsonHelper::copy(value, item["dump"]);
+					}
+				}
+				else
+				{
+
 				}
 			}
 
@@ -395,6 +390,11 @@ namespace Servers
 			opcServer_->uninit();
 		}
 
+		Channels::EntriesMgr& OPCServer::GetEntriesMgr()
+		{
+			return entriesMgr;
+		}
+
 		void OPCServer::GetAllLeafs( std::vector<string_t>& namesList, const DWORD accessFilter )
 		{
 			opcAddressSpace::getInstance().getAllLeafs(namesList, accessFilter);
@@ -403,11 +403,6 @@ namespace Servers
 		frl::opc::address_space::Tag* OPCServer::GetTag( string_t fullPath )
 		{
 			return opcAddressSpace::getInstance().getTag(fullPath);
-		}
-
-		Channels::EntriesMgr& OPCServer::GetEntriesMgr()
-		{
-			return entriesMgr;
 		}
 
 	}

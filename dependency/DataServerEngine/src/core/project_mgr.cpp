@@ -110,8 +110,8 @@ namespace Core
 		Json::Value channels = root["modbus rtu nport"];
 		for ( size_t idx = 0; idx < channels.size(); ++idx )
 		{
-			Channels::Channel* channel = channelMgr_->Create(Channels::MODBUS_RTU_NPORT, channels[idx]);
-			Channels::Modbus::ModbusRTU* modbus_rtu_nport = static_cast<Channels::Modbus::ModbusRTU*>(channel);
+			Channels::ChannelPtr channel = channelMgr_->Create(Channels::MODBUS_RTU_NPORT, channels[idx]);
+			Channels::Modbus::ModbusRTUSPtr modbus_rtu_nport = boost::shared_polymorphic_downcast<Channels::Modbus::ModbusRTU>(channel);
 
 			string_t path = str( boost::format("channel_info/modbus_rtu/%1%") % channel->GetName() );
 			string_t txtDevices;
@@ -126,9 +126,15 @@ namespace Core
 					jsonDevices = jsonDevices["devices"];
 					for ( size_t idx = 0; idx < jsonDevices.size(); ++idx )
 					{
-						boost::shared_ptr<Channels::Channel> ch(channel);
-						Channels::Modbus::Device device( Channels::Modbus::CreateDevice(ch, jsonDevices[idx]) );
-						modbus_rtu_nport->AddDevice(device);
+						try
+						{
+							Channels::Modbus::DevicePtr device = Channels::Modbus::DeviceFactory::Create(channel, jsonDevices[idx]);
+							modbus_rtu_nport->AddDevice(device);
+						}
+						catch(const frl::Exception& exception)
+						{
+							BOOST_LOG_TRIVIAL(trace) << exception.GetDescription();
+						}
 					}
 				}
 				else
@@ -145,24 +151,11 @@ namespace Core
 			channel->Start();
 		}
 
-		//channels = root["modbus rtu serial"];
-		//for ( size_t idx = 0; idx < channels.size(); ++idx )
-		//{
-		//	string_t connection = channels[idx]["connection"].asString();
-		//	string_t name = channels[idx]["name"].asString();
-
-		//	Channels::Channel* channel = channelMgr::getInstance().Create(Channels::MODBUS_RTU_SERIAL, name);
-		//	StringArray splitArray;
-		//	boost::split( splitArray, connection, boost::is_any_of("=") );
-		//	channel->SetInitParam( splitArray );
-		//	//channel->Start();
-		//}
-
 		channels = root["opc da"];
 		for ( size_t idx = 0; idx < channels.size(); ++idx )
 		{
-			Channels::Channel* channel = channelMgr_->Create(Channels::OPC_DA2, channels[idx]);
-			Channels::OPC::ChannelOPC* opc = static_cast<Channels::OPC::ChannelOPC*>(channel);
+			Channels::ChannelPtr channel = channelMgr_->Create(Channels::OPC_DA2, channels[idx]);
+			Channels::ChannelOPCSPtr opc = boost::shared_polymorphic_downcast<Channels::OPC::ChannelOPC>(channel);
 
 			string_t path = str( boost::format("channel_info/opc/%1%") % channel->GetName() );
 			string_t txtTags = Util::Zip::GetEntry(projectFilename_, path);

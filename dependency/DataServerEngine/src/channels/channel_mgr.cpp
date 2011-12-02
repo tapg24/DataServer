@@ -3,6 +3,9 @@
 #include "channels/channel_modbus/channel_modbus_rtu.h"
 #include "utils/wxzip.h"
 
+#include <boost/typeof/typeof.hpp>
+#include <boost/make_shared.hpp>
+
 namespace Channels
 {
 
@@ -12,21 +15,24 @@ namespace Channels
 
 	ChannelMgr::~ChannelMgr()
 	{
-		channels_.release();
-		onStateChange_.disconnect_all_slots();
+		Clear();
 	}
 
-	Channel* ChannelMgr::CreateOPC(const string_t& name, const string_t& host, const string_t& server)
+	ChannelPtr ChannelMgr::CreateOPC(const string_t& name, const string_t& host, const string_t& server)
 	{
-		Channel* channel = new OPC::ChannelOPC(name, host, server);
+		ChannelPtr channel = boost::make_shared<OPC::ChannelOPC>(name, host, server);
 		Attach(channel);
-
-		Channels::OPC::ChannelOPC* opc = static_cast<Channels::OPC::ChannelOPC*>(channel);
-
 		return channel;
 	}
 
-	Channel* ChannelMgr::Create(ChannelType type, const Json::Value& jsonValue)
+	ChannelPtr ChannelMgr::CreateModbusRtu(boost::shared_ptr<Modbus::StreamRTU> stream, const string_t& name, const int32_t& pause)
+	{
+		ChannelPtr channel = boost::make_shared<Modbus::ModbusRTU>(stream, name, pause);
+		Attach(channel);
+		return channel;
+	}
+
+	ChannelPtr ChannelMgr::Create(ChannelType type, const Json::Value& jsonValue)
 	{
 		FRL_EXCEPT_GUARD();
 
@@ -46,15 +52,13 @@ namespace Channels
 				{
 					string_t name = jsonValue["name"].asString();
 					string_t server = jsonValue["server"].asString();
-					int port = jsonValue["port"].asInt();
-					int speed = jsonValue["speed"].asInt();
-					int timeout = jsonValue["timeout"].asInt();
-					int pause = jsonValue["pause"].asInt();
+					int32_t port = jsonValue["port"].asInt();
+					int32_t speed = jsonValue["speed"].asInt();
+					int32_t timeout = jsonValue["timeout"].asInt();
+					int32_t pause = jsonValue["pause"].asInt();
 
-					boost::shared_ptr<Modbus::StreamRTU> stream( new ModbusRTU_NPort(server, port, speed, timeout) );
-					Channel* channel = new Modbus::ModbusRTU(stream, name, pause);
-					Attach(channel);
-					return channel;
+					boost::shared_ptr<Modbus::StreamRTU> stream = boost::make_shared<ModbusRTU_NPort>(server, port, speed, timeout);
+					return CreateModbusRtu(stream, name, pause);
 				}
 			case MODBUS_RTU_SERIAL:
 				{
@@ -64,12 +68,12 @@ namespace Channels
 					//Attach(channelPtr);
 					//channelPtr->Init(name);
 					//return channelPtr;
-					return NULL;
+					FRL_THROW_CLASS( NotSupportedChannelType, "MODBUS_RTU_SERIAL not supported yet." );
+					//return NULL;
 				}
 			default:
 				{
-					BOOST_ASSERT(false);
-					return NULL;
+					FRL_THROW_CLASS( NotSupportedChannelType, "Type is not recognized." );
 				}
 			}
 		}
@@ -79,20 +83,20 @@ namespace Channels
 		}
 	}
 
-	void ChannelMgr::Attach( Channel* ptr )
+	void ChannelMgr::Attach( ChannelPtr& ptr )
 	{
 		channels_.push_back(ptr);
-		ptr->Bind( boost::bind(&ChannelMgr::OnChannelStateChange, this, _1, _2) );
+		ptr->Bind( boost::bind(&ChannelMgr::OnChannelStateChange, this, _1) );
 	}
 
-	void ChannelMgr::Detach(const unsigned long id)
+	void ChannelMgr::Detach(const uint32_t id)
 	{
 		ChannelContainer::iterator iter = channels_.begin();
 		ChannelContainer::iterator end = channels_.end();
 		ChannelContainer::iterator toDell = channels_.end();
 		for (; iter != end; ++iter)
 		{
-			if ( iter->GetId() == id )
+			if ( (*iter)->GetId() == id )
 			{
 				toDell = iter;
 			}
@@ -100,46 +104,34 @@ namespace Channels
 
 		if ( toDell != end )
 		{
-			channels_.release(toDell);
+			BOOST_ASSERT(toDell->use_count() == 1);
+			channels_.erase(toDell);
 		}
 	}
 
-	bool ChannelMgr::Exist(const unsigned long id) const
+	bool ChannelMgr::Exist(const uint32_t id) const
 	{
-		for (ChannelContainer::const_iterator iter = channels_.begin(); iter != channels_.end(); ++iter)
+		BOOST_FOREACH(const ChannelPtr& channel, channels_)
 		{
-			if ( iter->GetId() == id )
+			if ( channel->GetId() == id )
 			{
-				return true; 
+				return true;
 			}
 		}
 		return false;
 	}
 
-	Channel* ChannelMgr::Get( const unsigned long id )
+	ChannelPtr ChannelMgr::Get( const uint32_t id )
 	{
-		for (ChannelContainer::iterator iter = channels_.begin(); iter != channels_.end(); ++iter)
+		BOOST_FOREACH(const ChannelPtr& channel, channels_)
 		{
-			if ( iter->GetId() == id )
+			if ( channel->GetId() == id )
 			{
-				return iter->GetPtr(); 
+				return channel;
 			}
 		}
 
-		BOOST_ASSERT(false);
-		return NULL;
-	}
-
-	Channel* ChannelMgr::GetElseNull( const unsigned long id )
-	{
-		for (ChannelContainer::iterator iter = channels_.begin(); iter != channels_.end(); ++iter)
-		{
-			if ( iter->GetId() == id )
-			{
-				return iter->GetPtr(); 
-			}
-		}
-		return NULL;
+		FRL_THROW_S_CLASS( ChannelNotExist );
 	}
 
 	unsigned long ChannelMgr::Count() const
@@ -147,14 +139,20 @@ namespace Channels
 		return channels_.size();
 	}
 
-	void ChannelMgr::OnChannelStateChange( const uint32_t id, const ChannelState state )
+	void ChannelMgr::OnChannelStateChange( const ChannelInfo info )
 	{
-		onStateChange_(id, state);
+		onStateChange_(info);
 	}
 
 	boost::signals2::connection ChannelMgr::Bind( StateSlot callback )
 	{
 		return onStateChange_.connect(callback);
+	}
+
+	void ChannelMgr::Clear()
+	{
+		channels_.clear();
+		onStateChange_.disconnect_all_slots();
 	}
 
 }

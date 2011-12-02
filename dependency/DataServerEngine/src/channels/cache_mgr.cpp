@@ -12,18 +12,16 @@ namespace Channels
 
 	CacheMgr::~CacheMgr()
 	{
-		onNotify.disconnect_all_slots();
-		stopCycle.signal();
-		notifyThread.join();
+		Clear();
 	}
 
 	boost::signals2::connection CacheMgr::Bind(const Slot& slot)
 	{
 		{
-			boost::mutex::scoped_lock lock(subscribeMutex);
+			boost::mutex::scoped_lock lock(cacheGuard_);
 
 			std::list<std::string> changedList;
-			CacheContainer::iterator iter = cache_.begin();
+			CacheContainer::const_iterator iter = cache_.begin();
 			for(; iter != cache_.end(); ++iter)
 			{
 				changedList.push_back( iter->first );
@@ -45,7 +43,7 @@ namespace Channels
 		{
 			std::list<std::string> changedList;
 
-			CacheContainer::iterator iter = cache_.begin();
+			CacheContainer::const_iterator iter = cache_.begin();
 			for(; iter != cache_.end(); ++iter)
 			{
 				if( iter->second->isChanged() )
@@ -67,6 +65,8 @@ namespace Channels
 
 	bool CacheMgr::ItemExist( const std::string& name ) const
 	{
+		boost::mutex::scoped_lock lock(cacheGuard_);
+
 		CacheContainer::const_iterator where = cache_.find(name);
 		if( where != cache_.end() )
 		{
@@ -78,7 +78,7 @@ namespace Channels
 
 	void CacheMgr::UpdateItem( const CacheItemPtr& itemPtr )
 	{
-		boost::mutex::scoped_lock lock(updateMutex);
+		boost::mutex::scoped_lock lock(cacheGuard_);
 
 		CacheContainer::const_iterator where = cache_.find(itemPtr->GetName());
 		BOOST_ASSERT( where != cache_.end() );
@@ -88,23 +88,17 @@ namespace Channels
 
 	CacheItemPtr CacheMgr::GetItem(const std::string& itemName)
 	{
-		boost::mutex::scoped_lock lock(getMutex);
+		boost::mutex::scoped_lock lock(cacheGuard_);
 
 		CacheContainer::iterator where = cache_.find(itemName);
 		BOOST_ASSERT( where != cache_.end() );
-
-		/*if( where == cache_.end() )
-		{
-			BOOST_LOG_TRIVIAL(error) << itemName << " отсутствует в кеше. Создание временного объекта.";
-			return CacheItemPtr( new CacheItem(itemName, ComVariant()) );
-		}*/
 
 		return where->second;
 	}
 
 	void CacheMgr::InsertItem( const std::string& name, VARTYPE type )
 	{
-		boost::mutex::scoped_lock lock(insertMutex);
+		boost::mutex::scoped_lock lock(cacheGuard_);
 
 		ComVariant newVal;
 		newVal.setType(type);
@@ -114,7 +108,7 @@ namespace Channels
 
 	void CacheMgr::InsertItem( const std::string& name, const VARIANT& variant, const WORD quality )
 	{
-		boost::mutex::scoped_lock lock(insertMutex);
+		boost::mutex::scoped_lock lock(cacheGuard_);
 
 		CacheItemPtr newItem(new CacheItem(name, variant, quality));
 		cache_.insert(std::make_pair(name, newItem));
@@ -122,7 +116,7 @@ namespace Channels
 
 	void CacheMgr::InsertItem( const TagInfo& tag )
 	{
-		boost::mutex::scoped_lock lock(insertMutex);
+		boost::mutex::scoped_lock lock(cacheGuard_);
 
 		ComVariant newVal;
 		newVal.setType(tag.type_);
@@ -132,7 +126,7 @@ namespace Channels
 
 	void CacheMgr::NotifyAll() const
 	{
-		boost::mutex::scoped_lock lock(notifyMutex);
+		boost::mutex::scoped_lock lock(cacheGuard_);
 
 		std::list<std::string> changedList;
 		CacheContainer::const_iterator iter = cache_.begin();
@@ -149,7 +143,7 @@ namespace Channels
 
 	void CacheMgr::NotifyThis(const std::list<std::string>& changedList) const
 	{
-		boost::mutex::scoped_lock lock(notifyMutex);
+		boost::mutex::scoped_lock lock(cacheGuard_);
 
 		if ( !changedList.empty() )
 		{
@@ -159,6 +153,8 @@ namespace Channels
 
 	void CacheMgr::ResetAll( )
 	{
+		boost::mutex::scoped_lock lock(cacheGuard_);
+
 		BOOST_FOREACH(CacheItemPtr& itemPtr, cache_ | boost::adaptors::map_values)
 		{
 			itemPtr->Reset();
@@ -167,6 +163,8 @@ namespace Channels
 
 	void CacheMgr::ResetThis( const std::list<std::string>& resetList )
 	{
+		boost::mutex::scoped_lock lock(cacheGuard_);
+
 		BOOST_FOREACH(const std::string& name, resetList)
 		{
 			CacheContainer::iterator iter = cache_.find(name);
@@ -176,4 +174,12 @@ namespace Channels
 			}
 		}
 	}
+
+	void CacheMgr::Clear()
+	{
+		onNotify.disconnect_all_slots();
+		stopCycle.signal();
+		notifyThread.join();
+	}
+
 }

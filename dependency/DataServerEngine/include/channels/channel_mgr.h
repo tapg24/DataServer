@@ -1,11 +1,16 @@
 #ifndef CHANNEL_MGR_H
 #define CHANNEL_MGR_H
 
-#include "channel_base.h"
+#include "utils/types.h"
 #include "utils/string.h"
+#include "channel_base.h"
+#include "channel_modbus/modbus_rtu_stream_fwd.h"
 
-#include <boost/ptr_container/ptr_vector.hpp>
 #include "../../jsoncpp-0.5.0/include/json/json.h"
+#include "../../frl/include/frl_exception.h"
+
+#include <map>
+#include <boost/shared_ptr.hpp>
 
 namespace Channels
 {
@@ -13,31 +18,34 @@ namespace Channels
 	class ChannelMgr
 	{
 		//typedefs
-		//typedef boost::ptr_vector<Channel> ChannelContainer;
-		typedef boost::ptr_vector<Channel> ChannelContainer;
+		typedef std::vector<ChannelPtr> ChannelContainer;
 		
 		// members
 		ChannelContainer channels_;
 		StateSignal onStateChange_;
 
 	protected:
-		void OnChannelStateChange(const uint32_t id, const ChannelState state);
+		void OnChannelStateChange(const ChannelInfo info);
 
 	public:
+		FRL_EXCEPTION_CLASS( NotSupportedChannelType );
+		FRL_EXCEPTION_CLASS( ChannelNotExist );
+
 		ChannelMgr();
 		~ChannelMgr();
 
-		Channel* Create(ChannelType type, const Json::Value& jsonValue);
-		Channel* CreateOPC(const string_t& name, const string_t& host, const string_t& server);
+		ChannelPtr Create(ChannelType type, const Json::Value& jsonValue);
+		ChannelPtr CreateOPC(const string_t& name, const string_t& host, const string_t& server);
+		ChannelPtr CreateModbusRtu(boost::shared_ptr<Modbus::StreamRTU> stream, const string_t& name, const int32_t& pause);
 
 		boost::signals2::connection Bind(StateSlot callback);
 
-		void Attach(Channel* ptr);
-		void Detach(const unsigned long id);
-		bool Exist(const unsigned long id) const;
-		Channel* Get(const unsigned long id);
-		Channel* ChannelMgr::GetElseNull(const unsigned long id);
+		void Attach(ChannelPtr& ptr);
+		void Detach(const uint32_t id);
+		bool Exist(const uint32_t id) const;
+		ChannelPtr Get(const uint32_t id);
 		unsigned long Count() const;
+		void Clear();
 
 	private:
 		// functor
@@ -46,7 +54,7 @@ namespace Channels
 			ChannelEquals(const unsigned long id) : m_id(id)
 			{}
 
-			bool operator() (const Channel* const channel) const
+			bool operator() (const ChannelPtr const channel) const
 			{
 				return m_id == channel->GetId();
 			}

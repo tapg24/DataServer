@@ -5,6 +5,7 @@
 #include "utils/string.h"
 #include "channels/channel_base.h"
 #include "channels/tag_info.h"
+
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
@@ -14,33 +15,26 @@ namespace Channels
 	{
 		class StreamRTU;
 
-		class DeviceBase : boost::noncopyable
+		class ModbusDeviceBase : boost::noncopyable
 		{
+			ChannelWPtr parentChannel_;
 			string_t deviceId_;
 			std::vector<TagInfo> tags_;
 
 		protected:
-			boost::shared_ptr<Channel> parentChannel_;
-
-			string_t CatTagPrefix(const string_t& name);
-			void CatTagPrefix(std::vector<string_t>& names);
-
-		public:
-			void AddTag(const string_t& tagName, const VARTYPE tagType);
-			void AddTag(const TagInfo& tag);
-			void AddTags(const TagInfoArray& tags);
-			const bool TagExist(const string_t& tagName) const;
+			void AddTag(const string_t& name, const VARIANT& variant, const WORD quality);
+			string_t WithPrefix(const string_t& name);
+			const bool TagExist(const string_t& name) const;
+			ChannelPtr GetChannel();
 
 		public:
-			DeviceBase(boost::shared_ptr<Channel>& parent, const string_t& deviceId);
-			virtual ~DeviceBase() {}
+			ModbusDeviceBase(ChannelWPtr& parent, const string_t& deviceId);
+			virtual ~ModbusDeviceBase() {}
 
 			virtual void DoDataRequest(boost::shared_ptr<StreamRTU>& stream) = 0;
-			const std::vector<TagInfo> GetTags() const;
 		};
 
-		typedef boost::shared_ptr<DeviceBase> Device;
-		typedef std::vector<Device> DeviceContainer;
+		typedef boost::shared_ptr<ModbusDeviceBase> DevicePtr;
 	}
 }
 

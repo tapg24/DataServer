@@ -123,6 +123,7 @@
 				PreprocessorDefinitions="WIN32;__WXMSW__;_WINDOWS"
 				StringPooling="true"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -259,10 +260,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\src\channel_modbus_search_sirius_dialog.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\channel_opc_dialog.cpp"
 				>
 			</File>
@@ -300,10 +297,6 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-			<File
-				RelativePath="..\..\..\include\channel_modbus_search_sirius_dialog.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\include\channel_opc_dialog.h"
 				>

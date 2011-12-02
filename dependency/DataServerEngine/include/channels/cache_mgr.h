@@ -28,11 +28,7 @@ namespace Channels
 		CacheContainer cache_;
 		Event stopCycle;
 		boost::thread notifyThread;
-		mutable boost::mutex notifyMutex;
-		boost::mutex getMutex;
-		boost::mutex updateMutex;
-		boost::mutex insertMutex;
-		boost::mutex subscribeMutex;
+		mutable boost::mutex cacheGuard_;
 
 	private:
 		void NotifyCycleThread();
@@ -55,6 +51,8 @@ namespace Channels
 		void InsertItem(const std::string& name, const VARIANT& variant, const WORD quality);
 		void InsertItem(const TagInfo& tag);
 
+		void Clear();
+
 		//template <typename Type>
 		//void InsertItem(const std::string& itemName)
 		//{
@@ -66,7 +64,5 @@ namespace Channels
 		CacheItemPtr GetItem(const std::string& itemName);
 	};
 }
-
-//typedef Singleton< Channels::CacheMgr > cacheMgr;
 
 #endif // CACHE_MGR_H

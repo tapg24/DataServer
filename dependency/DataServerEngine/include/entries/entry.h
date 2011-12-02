@@ -11,7 +11,8 @@ namespace Channels
 {
 	enum EntryType
 	{
-		DefaultEntry_Type = 0,
+		NullEntry_Type = 0,
+		DirectEntry_Type,
 		TS_Type
 	};
 

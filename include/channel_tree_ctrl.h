@@ -3,6 +3,7 @@
 
 #include "utils/types.h"
 #include "channels/channel_base.h"
+//#include "channels/channel_mgr_fwd.h"
 
 #include <boost/signals2.hpp>
 
@@ -48,15 +49,18 @@ public:
 	bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxSize(250, 0), long style = wxTR_DEFAULT_STYLE, const wxValidator &validator = wxDefaultValidator, const wxString &name = "");
 	void UpdateBinding();
 	void SetView(ChannelViewCtrl* view);
+	void Clear();
 
 protected:
 	void OnEditLabel(wxTreeEvent& event);
 	void OnItemRigthClicked(wxTreeEvent& event);
 	void OnPopupClick(wxMenuEvent& event);
 	void OnItemSelChanged(wxTreeEvent& event);
-	void OnChannelStateChangeProxy(const uint32_t id, Channels::ChannelState state);
+	//void OnChannelStateChangeProxy(const uint32_t id, const string_t& name, Channels::ChannelState state);
+	void OnChannelStateChangeProxy(const Channels::ChannelInfo info);
 	void OnChannelStateChange(wxCommandEvent& event);
 	wxTreeItemId FindItem(wxTreeItemId root, const int channelId);
+
 private:
 	ChannelViewCtrl* view_;
 	wxTreeItemId rootItem_;
@@ -66,15 +70,12 @@ private:
 	boost::signals2::connection channel_connection_;
 };
 
-class ChannelStateEvent
+struct  ChannelStateEvent
 {
-public:
-	const uint32_t channelId;
-	const Channels::ChannelState channelState;
+	const Channels::ChannelInfo info;
 
-	ChannelStateEvent(const uint32_t id, const Channels::ChannelState state)
-		: channelId(id),
-		channelState(state)
+	ChannelStateEvent(const Channels::ChannelInfo infoChannel)
+		: info(infoChannel)
 	{}
 };
 

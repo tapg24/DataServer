@@ -12,8 +12,8 @@ namespace Channels
 	namespace Modbus
 	{
 
-		Sirius2Old::Sirius2Old(boost::shared_ptr<Channel>& parent, const string_t& deviceId, const int32_t deviceType, const int32_t serialId, const int32_t modbusId, const bool calc)
-			: DeviceBase(parent, deviceId), deviceId_(deviceId), deviceType_(deviceType), serialId_(serialId), modbusId_(modbusId), calculateParam_(calc)
+		Sirius2Old::Sirius2Old(ChannelWPtr parent, const string_t& deviceId, const int32_t deviceType, const int32_t serialId, const int32_t modbusId, const bool calc)
+			: ModbusDeviceBase(parent, deviceId), deviceId_(deviceId), deviceType_(deviceType), serialId_(serialId), modbusId_(modbusId), calculateParam_(calc)
 		{
 			identRequested_ = false;
 			deviceStatus_ = 0;
@@ -25,9 +25,9 @@ namespace Channels
 			systemTags.request_time = SetTagPrefix("system.request_time");
 			systemTags.device_time = SetTagPrefix("system.device_time");
 			systemTags.deviceStatus = SetTagPrefix("system.device_status");
-			DeviceBase::AddTag(systemTags.request_time, 5);
-			DeviceBase::AddTag(systemTags.device_time, 5);
-			DeviceBase::AddTag(systemTags.deviceStatus, 17);
+//			DeviceBase::AddTag(systemTags.request_time, 5);
+//			DeviceBase::AddTag(systemTags.device_time, 5);
+//			DeviceBase::AddTag(systemTags.deviceStatus, 17);
 		}
 
 		Sirius2Old::~Sirius2Old()
@@ -157,7 +157,7 @@ namespace Channels
 				calcTags += paramTags.U;
 				BOOST_FOREACH(const string_t& tagName, calcTags)
 				{
-					AddTag(tagName, 4);
+//					AddTag(tagName, 4);
 				}
 			}
 		}
@@ -176,7 +176,7 @@ namespace Channels
 			BOOST_FOREACH(const string_t& paramName, params)
 			{
 
-				if ( !DeviceBase::TagExist(paramName) )
+				if ( !ModbusDeviceBase::TagExist(paramName) )
 				{
 					calculateParam_ = false;
 					break;
@@ -189,7 +189,7 @@ namespace Channels
 				calcTags += paramTags.I;
 				BOOST_FOREACH(const string_t& tagName, calcTags)
 				{
-					AddTag(tagName, 4);
+//					AddTag(tagName, 4);
 				}
 			}
 		}
@@ -242,7 +242,7 @@ namespace Channels
 				calcTags += paramTags.Ia, paramTags.Ib, paramTags.Ic, paramTags.Ua, paramTags.Ub, paramTags.Uc, paramTags.I, paramTags.U, paramTags.P, paramTags.Q;
 				BOOST_FOREACH(const string_t& tagName, calcTags)
 				{
-					AddTag(tagName, 4);
+//					AddTag(tagName, 4);
 				}
 			}
 		}
@@ -375,13 +375,13 @@ namespace Channels
 		void Sirius2Old::SetIdentityRequest( const RequestRTU& request )
 		{
 			identityRequest_ = request;
-			DeviceBase::AddTags(request.tags);
+//			DeviceBase::AddTags(request.tags);
 		}
 
 		void Sirius2Old::AddRequest( const RequestRTU& request )
 		{
 			requestContainer_.push_back(request);
-			DeviceBase::AddTags(request.tags);
+//			DeviceBase::AddTags(request.tags);
 		}
 
 	}

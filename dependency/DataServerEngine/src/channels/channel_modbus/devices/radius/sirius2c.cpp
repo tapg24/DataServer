@@ -2,15 +2,14 @@
 
 #include "core/project_mgr.h"
 #include "channels/cache_mgr.h"
+#include "channels/channel_modbus/devices/modbus_request.h"
 #include "utils/timer.hpp"
-
-#include <boost/foreach.hpp>
 
 namespace Channels
 {
 	namespace Modbus
 	{
-		Sirius2C::Sirius2C( boost::shared_ptr<Channel>& parent	 // родительский канал
+		Sirius2C::Sirius2C( ChannelWPtr parent	 // родительский канал
 							, const string_t& deviceId			// идентификатор устройства в системе
 							, const int32_t deviceType			// тип устройства
 							, const int32_t serialId			// серийный номер устройства / пароль
@@ -18,36 +17,20 @@ namespace Channels
 							, const int32_t primeCurrent		// первичный ток
 							, const int32_t secondCurrent		// вторичный ток
 							)
-			: DeviceBase(parent, deviceId), deviceType_(deviceType), serialId_(serialId)
+			: Sirius2Base(parent, deviceId, deviceType, "Сириус-2-С", serialId, modbusId)
 		{
-			identRequested_ = false;
-			deviceStatus_ = 0;
-			checkCount_ = 0;
+			paramTags.DI16 = Sirius2Base::WithPrefix("DI16");
+			paramTags.I = Sirius2Base::WithPrefix("I");
+			paramTags.Ia = Sirius2Base::WithPrefix("Ia");
+			paramTags.Ib = Sirius2Base::WithPrefix("Ib");
+			paramTags.Ic = Sirius2Base::WithPrefix("Ic");
 
-			systemTags.request_time = DeviceBase::CatTagPrefix("system.request_time");
-			systemTags.device_time = DeviceBase::CatTagPrefix("system.device_time");
-			systemTags.deviceStatus = DeviceBase::CatTagPrefix("system.device_status");
-			DeviceBase::AddTag(systemTags.request_time, 5);
-			DeviceBase::AddTag(systemTags.device_time, 5);
-			DeviceBase::AddTag(systemTags.deviceStatus, 17);
-
-			paramTags.I = DeviceBase::CatTagPrefix("I");
-			paramTags.Ia = DeviceBase::CatTagPrefix("Ia");
-			paramTags.Ib = DeviceBase::CatTagPrefix("Ib");
-			paramTags.Ic = DeviceBase::CatTagPrefix("Ic");
-			DeviceBase::AddTag(paramTags.I, 4);
-			//DeviceBase::AddTag(paramTags.I, _STR("кВ"));
-			DeviceBase::AddTag(paramTags.Ia, 4);
-			DeviceBase::AddTag(paramTags.Ib, 4);
-			DeviceBase::AddTag(paramTags.Ic, 4);
-
-			// identity request
-			identityRequest_.station = modbusId;
-			identityRequest_.func = 3;
-			identityRequest_.startAdress = 4;
-			identityRequest_.byteCount = 4;
-			identityRequest_.tags.push_back( TagInfo("type", 18) );
-			identityRequest_.tags.push_back( TagInfo("serial_code", 18) );
+			Sirius2Base::AddTag(paramTags.DI16, ComVariant(uint16_t(0)), OPC_QUALITY_BAD);
+			Sirius2Base::AddTag(paramTags.I, ComVariant(float(0)), OPC_QUALITY_BAD);
+			Sirius2Base::AddTag(paramTags.Ia, ComVariant(float(0)), OPC_QUALITY_BAD);
+			Sirius2Base::AddTag(paramTags.Ib, ComVariant(float(0)), OPC_QUALITY_BAD);
+			Sirius2Base::AddTag(paramTags.Ic, ComVariant(float(0)), OPC_QUALITY_BAD);
+			Sirius2Base::AddTag(Sirius2Base::WithPrefix("I_unit"), ComVariant(string_t("А")), OPC_QUALITY_GOOD);
 
 			// data request
 			// discrete
@@ -57,21 +40,21 @@ namespace Channels
 				request.func = 2;
 				request.startAdress = 72;
 				request.byteCount = 2;
-				request.tags.push_back( TagInfo("DI16", 18) );
-				requestContainer_.push_back(request);
+				request.tags.push_back( TagInfo(paramTags.DI16, 18) );
+				Sirius2Base::AddRequest(request);
 			}
 			// analog
 			{
 				RequestRTU request;
 				request.startAdress = modbusId;
-				request.func = 2;
+				request.func = 3;
 				request.startAdress = 1280;
 				request.byteCount = 6;
-				float factor = static_cast<float>(primeCurrent / secondCurrent / 1000);
-				request.tags.push_back( TagInfo("Ia", 4, factor /* кВ */) );
-				request.tags.push_back( TagInfo("Ib", 4, factor /* кВ */) );
-				request.tags.push_back( TagInfo("Ic", 4, factor /* кВ */) );
-				requestContainer_.push_back(request);
+				float factor = static_cast<float>(primeCurrent / secondCurrent);
+				request.tags.push_back( TagInfo(paramTags.Ia, 4, factor /* А */) );
+				request.tags.push_back( TagInfo(paramTags.Ib, 4, factor /* А */) );
+				request.tags.push_back( TagInfo(paramTags.Ic, 4, factor /* А */) );
+				Sirius2Base::AddRequest(request);
 			}
 		}
 
@@ -91,79 +74,5 @@ namespace Channels
 
 			projectMgr::getInstance().GetCacheMgr()->GetItem(paramTags.I)->CopyFrom(OPC_QUALITY_GOOD, ComVariant(I));
 		}
-
-		void Sirius2C::DoIdentityRequest( boost::shared_ptr<StreamRTU>& stream )
-		{
-			DoRequest(identityRequest_, stream);
-
-			string_t deviceFamilyType = DeviceBase::CatTagPrefix("device_family_type");
-			string_t deviceSerialCode = DeviceBase::CatTagPrefix("serial_code");
-
-			// если тип устройства несовпадает, то отключаем опрос устройства
-			if ( deviceType_ == projectMgr::getInstance().GetCacheMgr()->GetItem(deviceFamilyType)->GetValue().AsUShort() )
-			{
-				deviceStatus_ &= ~1;
-			}
-			else
-			{
-				deviceStatus_ |=  1;
-			}
-
-			// если серийный код устройства не совпадает, то отключаем функцию управления сириусом
-			if ( serialId_ == projectMgr::getInstance().GetCacheMgr()->GetItem(deviceSerialCode)->GetValue().AsUShort() )
-			{
-				deviceStatus_ &= ~2;
-			}
-			else
-			{
-				deviceStatus_ |=  2;
-			}
-
-			projectMgr::getInstance().GetCacheMgr()->GetItem(systemTags.deviceStatus)->CopyFrom(OPC_QUALITY_GOOD, ComVariant(deviceStatus_));
-		}
-
-		void Sirius2C::DoDataRequest( boost::shared_ptr<StreamRTU>& stream )
-		{
-			CXTimer devicePerformance;
-
-			if ( !identRequested_ )
-			{
-				DoIdentityRequest(stream);
-				identRequested_= true;
-			}
-
-			if ( (deviceStatus_ & 1) == 1 )
-			{
-				if  ( ++checkCount_ == 2000 )
-				{
-					checkCount_ = 0;
-					identRequested_ = false;
-				}
-			}
-
-			BOOST_FOREACH ( const RequestRTU& request, requestContainer_)
-			{
-				CXTimer requestPerformance;
-
-				DoRequest(request, stream);
-
-				projectMgr::getInstance().GetCacheMgr()->GetItem(systemTags.request_time)->CopyFrom(OPC_QUALITY_GOOD, ComVariant(requestPerformance.GetElapsedSec()));
-			}
-
-			Calculate();
-
-			projectMgr::getInstance().GetCacheMgr()->GetItem(systemTags.device_time)->CopyFrom(OPC_QUALITY_GOOD, ComVariant(devicePerformance.GetElapsedSec()));
-		}
-
-		void Sirius2C::SetIdentityRequest( const RequestRTU& request )
-		{
-			identityRequest_ = request;
-		}
-
-		void Sirius2C::AddRequest( const RequestRTU& request )
-		{
-			requestContainer_.push_back(request);
-		}
-
 	}
 }

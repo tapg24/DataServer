@@ -26,8 +26,12 @@ namespace Channels
 		typedef std::vector<RequestRTU> RequestContainer;
 
 		class StreamRTU;
-		void DoRequest(const RequestRTU& request, boost::shared_ptr<StreamRTU>& stream);
-		void ProcessData(const RequestRTU& request, boost::shared_ptr<StreamRTU>& stream, const bool swapEndian = false);
+		class ModbusRequest
+		{
+		public:
+			static void DoRequest(const RequestRTU& request, boost::shared_ptr<StreamRTU>& stream);
+			static void ProcessData(const RequestRTU& request, boost::shared_ptr<StreamRTU>& stream, const bool swapEndian = false);
+		};
 	}
 }
 

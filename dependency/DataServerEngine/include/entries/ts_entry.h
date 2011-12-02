@@ -19,8 +19,7 @@ namespace Channels
 		std::map<string_t, std::list<StateCheckerPtr> > src_checkers_map_;
 
 	public:
-		//EntryTS(const string_t& ts_name);
-		EntryTS(const string_t& ts_name, const Json::Value& convert);
+		EntryTS(const string_t& ts_name, const Json::Value& content);
 		~EntryTS();
 
 		void Init();

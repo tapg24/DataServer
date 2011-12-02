@@ -7,31 +7,25 @@ namespace Channels
 {
 	namespace Modbus
 	{
-		DeviceBase::DeviceBase( boost::shared_ptr<Channel>& parent, const string_t& deviceId )
+		ModbusDeviceBase::ModbusDeviceBase( ChannelWPtr& parent, const string_t& deviceId )
 			: parentChannel_(parent), deviceId_(deviceId)
 		{
+			BOOST_ASSERT( !parentChannel_.expired() );
 		}
 
-		void DeviceBase::AddTag(const string_t& tagName, const VARTYPE tagType)
+		void ModbusDeviceBase::AddTag( const string_t& name, const VARIANT& variant, const WORD quality )
 		{
-			AddTag(TagInfo(tagName, tagType));
+			BOOST_ASSERT( !parentChannel_.expired() );
+			ChannelPtr parentChannel = parentChannel_.lock();
+			tags_.push_back(TagInfo(name, variant.vt));
+			parentChannel->AddTag(name, variant, quality);
 		}
 
-		void DeviceBase::AddTag( const TagInfo& tag )
-		{
-			tags_.push_back(tag);
-		}
-
-		void DeviceBase::AddTags( const TagInfoArray& tags )
-		{
-			tags_.insert(tags_.end(), tags.begin(), tags.end());
-		}
-
-		const bool DeviceBase::TagExist(const string_t& tagName) const
+		const bool ModbusDeviceBase::TagExist(const string_t& name) const
 		{
 			BOOST_FOREACH(const TagInfo& tagInfo, tags_)
 			{
-				if ( tagInfo.name_ == tagName )
+				if ( tagInfo.name_ == name )
 				{
 					return true;
 				}
@@ -40,22 +34,14 @@ namespace Channels
 			return false;
 		}
 
-		const std::vector<TagInfo> DeviceBase::GetTags() const
-		{
-			return tags_;
-		}
-
-		string_t DeviceBase::CatTagPrefix( const string_t& name )
+		string_t ModbusDeviceBase::WithPrefix( const string_t& name )
 		{
 			return boost::lexical_cast<std::string>(deviceId_) + "." + name;
 		}
 
-		void DeviceBase::CatTagPrefix( std::vector<string_t>& names )
+		Channels::ChannelPtr ModbusDeviceBase::GetChannel()
 		{
-			BOOST_FOREACH(std::string& name, names)
-			{
-				name = CatTagPrefix(name);
-			}
+			return parentChannel_.lock();
 		}
 
 	}

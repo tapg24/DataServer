@@ -1,6 +1,6 @@
 #include "channel_tree_ctrl.h"
-
 #include "channel_view_ctrl.h"
+
 #include "../dependency/DataServerEngine/include/channels/channel_opc/channel_opc.h"
 #include "channel_opc_dialog.h"
 #include "nport_device_search_dialog.h"
@@ -14,7 +14,6 @@ const wxEventType ChannelStateEvt = wxNewEventType();
 
 ChannelTreeCtrl::ChannelTreeCtrl()
 {
-
 }
 
 ChannelTreeCtrl::ChannelTreeCtrl( wxWindow *parent, wxWindowID id /*= wxID_ANY*/, const wxPoint &pos /*= wxDefaultPosition*/, const wxSize &size /*= wxDefaultSize*/, long style /*= wxTR_DEFAULT_STYLE*/, const wxValidator &validator /*= wxDefaultValidator*/, const wxString &name /*= ""*/ )
@@ -114,7 +113,7 @@ void ChannelTreeCtrl::OnItemRigthClicked( wxTreeEvent& event )
 	{
 		wxTreeItemData* itemData = GetItemData(clickedItem_);
 		ChannelData* channelData = dynamic_cast<ChannelData*>(itemData);
-		const Channels::Channel* channelPtr = projectMgr::getInstance().GetChannelMgr()->Get(channelData->GetId());
+		const Channels::ChannelPtr channelPtr = projectMgr::getInstance().GetChannelMgr()->Get(channelData->GetId());
 		if ( channelPtr->GetState() == Channels::Disconnected )
 		{
 			popup_menu.Append(ID_StartChannel, "Запустить");
@@ -144,7 +143,7 @@ void ChannelTreeCtrl::OnPopupClick( wxMenuEvent& event )
 				dlg.InitParam(dialogParam);
 				if ( wxID_OK == dlg.ShowModal() )
 				{
-					Channels::Channel* channel = projectMgr::getInstance().GetChannelMgr()->CreateOPC("123123123", dialogParam->hostName, dialogParam->serverName );
+					Channels::ChannelPtr channel = projectMgr::getInstance().GetChannelMgr()->CreateOPC("123123123", dialogParam->hostName, dialogParam->serverName );
 					channel->Start();
 				}
 				else
@@ -175,7 +174,7 @@ void ChannelTreeCtrl::OnPopupClick( wxMenuEvent& event )
 		{
 			wxTreeItemData* itemData = GetItemData(clickedItem_);
 			ChannelData* channelData = dynamic_cast<ChannelData*>(itemData);
-			Channels::Channel* channel = projectMgr::getInstance().GetChannelMgr()->Get(channelData->GetId());
+			Channels::ChannelPtr channel = projectMgr::getInstance().GetChannelMgr()->Get(channelData->GetId());
 			channel->Start();
 
 			break;
@@ -184,7 +183,7 @@ void ChannelTreeCtrl::OnPopupClick( wxMenuEvent& event )
 		{
 			wxTreeItemData* itemData = GetItemData(clickedItem_);
 			ChannelData* channelData = dynamic_cast<ChannelData*>(itemData);
-			Channels::Channel* channel = projectMgr::getInstance().GetChannelMgr()->Get(channelData->GetId());
+			Channels::ChannelPtr channel = projectMgr::getInstance().GetChannelMgr()->Get(channelData->GetId());
 			channel->Stop();
 
 			break;
@@ -204,36 +203,42 @@ void ChannelTreeCtrl::OnPopupClick( wxMenuEvent& event )
 	}
 }
 
+void ChannelTreeCtrl::OnChannelStateChangeProxy(const Channels::ChannelInfo info)
+{
+	wxCommandEvent evt( ChannelStateEvt );
+	evt.SetClientData( new ChannelStateEvent(info) );
+	this->AddPendingEvent(evt);
+}
+
 void ChannelTreeCtrl::OnChannelStateChange( wxCommandEvent& event )
 {
 	std::auto_ptr<ChannelStateEvent> eventData( reinterpret_cast<ChannelStateEvent*>(event.GetClientData()) );
 
-	switch( eventData->channelState )
+	switch( eventData->info.state )
 	{
 	case Channels::Created:
 		{
 			wxTreeItemId curItem;
-			Channels::Channel* channel = projectMgr::getInstance().GetChannelMgr()->Get(eventData->channelId);
 
-			if ( channel->GetType() == Channels::OPC_DA2 )
+			if ( eventData->info.type == Channels::OPC_DA2 )
 			{
 				curItem = rootOPC_;
 			}
-			else if ( channel->GetType() == Channels::MODBUS_RTU_NPORT )
+			else if ( eventData->info.type == Channels::MODBUS_RTU_NPORT )
 			{
 				curItem = rootModbusRTU_NPort_;
 			}
 
-			wxTreeItemId addedItem = AppendItem(curItem, channel->GetName());
+			wxTreeItemId addedItem = AppendItem(curItem, eventData->info.name);
 			SetItemImage(addedItem, TreeCtrlIcon_ChannelDisconnected);
-			SetItemData(addedItem, new ChannelData(channel->GetId()));
+			SetItemData(addedItem, new ChannelData(eventData->info.id));
 			SelectItem(addedItem);
 
 			break;
 		}
 	case Channels::Deleted:
 		{
-			wxTreeItemId item = FindItem(rootItem_, eventData->channelId);
+			wxTreeItemId item = FindItem(rootItem_, eventData->info.id);
 			BOOST_ASSERT( item );
 			Delete(item);
 
@@ -241,7 +246,7 @@ void ChannelTreeCtrl::OnChannelStateChange( wxCommandEvent& event )
 		}
 	case Channels::Connected:
 		{
-			wxTreeItemId item = FindItem(rootItem_, eventData->channelId);
+			wxTreeItemId item = FindItem(rootItem_, eventData->info.id);
 			BOOST_ASSERT( item );
 			SetItemImage(item, TreeCtrlIcon_ChannelConnected);
 
@@ -249,7 +254,7 @@ void ChannelTreeCtrl::OnChannelStateChange( wxCommandEvent& event )
 		}
 	case Channels::Disconnected:
 		{
-			wxTreeItemId item = FindItem(rootItem_, eventData->channelId);
+			wxTreeItemId item = FindItem(rootItem_, eventData->info.id);
 			BOOST_ASSERT( item );
 			SetItemImage(item, TreeCtrlIcon_ChannelDisconnected);
 
@@ -257,7 +262,7 @@ void ChannelTreeCtrl::OnChannelStateChange( wxCommandEvent& event )
 		}
 	case Channels::InProgress:
 		{
-			wxTreeItemId item = FindItem(rootItem_, eventData->channelId);
+			wxTreeItemId item = FindItem(rootItem_, eventData->info.id);
 			BOOST_ASSERT( item );
 			SetItemImage(item, TreeCtrlIcon_ChannelInProgress);
 
@@ -265,21 +270,13 @@ void ChannelTreeCtrl::OnChannelStateChange( wxCommandEvent& event )
 		}
 	case Channels::Renamed:
 		{
-			Channels::Channel* channel = projectMgr::getInstance().GetChannelMgr()->Get(eventData->channelId);
-			wxTreeItemId item = FindItem(rootItem_, eventData->channelId);
+			wxTreeItemId item = FindItem(rootItem_, eventData->info.id);
 			BOOST_ASSERT( item );
-			SetItemText(item, channel->GetName());
+			SetItemText(item, eventData->info.name);
 
 			break;
 		}
 	}
-}
-
-void ChannelTreeCtrl::OnChannelStateChangeProxy( const uint32_t id, Channels::ChannelState state )
-{
-	wxCommandEvent evt( ChannelStateEvt );
-	evt.SetClientData( new ChannelStateEvent(id, state) );
-	wxPostEvent(this, evt);
 }
 
 void ChannelTreeCtrl::OnItemSelChanged(wxTreeEvent& event)
@@ -300,5 +297,10 @@ void ChannelTreeCtrl::OnItemSelChanged(wxTreeEvent& event)
 
 void ChannelTreeCtrl::UpdateBinding()
 {
-	channel_connection_ = projectMgr::getInstance().GetChannelMgr()->Bind( boost::bind(&ChannelTreeCtrl::OnChannelStateChangeProxy, this, _1, _2) );
+	channel_connection_ = projectMgr::getInstance().GetChannelMgr()->Bind( boost::bind(&ChannelTreeCtrl::OnChannelStateChangeProxy, this, _1) );
+}
+
+void ChannelTreeCtrl::Clear()
+{
+	wxTreeCtrl::DeleteAllItems();
 }

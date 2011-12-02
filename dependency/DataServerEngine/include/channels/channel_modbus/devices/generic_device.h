@@ -3,21 +3,23 @@
 
 #include "utils/types.h"
 #include "utils/string.h"
-#include <vector>
-#include <boost/shared_ptr.hpp>
 #include "channels/tag_info.h"
-#include "channels/channel_modbus/modbus_rtu_stream.h"
 #include "modbus_device_base.h"
 #include "modbus_request.h"
+
+#include <vector>
+
+#include <boost/shared_ptr.hpp>
 
 namespace Channels
 {
 	namespace Modbus
 	{
-		class GenericDevice : public DeviceBase
+		class StreamRTU;
+
+		class GenericDevice : public ModbusDeviceBase
 		{
 			// информация об устройстве
-			//std::string deviceId_;
 			int32_t deviceType_;
 			int32_t serialId_;
 			int32_t modbusId_;
@@ -36,10 +38,9 @@ namespace Channels
 			RequestContainer requestContainer_;
 
 		public:
-			GenericDevice(boost::shared_ptr<Channel>& parent, const string_t& deviceId);
+			GenericDevice(ChannelWPtr parent, const string_t& deviceId);
 			~GenericDevice();
 
-			//void Init(const boost::property_tree::ptree& ptree);
 			void DoDataRequest(boost::shared_ptr<StreamRTU>& stream);
 			const std::vector<string_t> GetRegistredTags() const;
 		};

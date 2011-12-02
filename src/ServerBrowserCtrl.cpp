@@ -1,11 +1,14 @@
-#include "core/project_mgr.h"
-#include "entries/entry.h"
-#include "entries/ts_def.h"
-#include "servers/opc da/opc_server.h"
 #include "ServerBrowserCtrl.h"
+
+#include "../dependency/DataServerEngine/include/core/project_mgr.h"
+#include "../dependency/DataServerEngine/include/channels/cache_mgr.h"
+#include "../dependency/DataServerEngine/include/entries/entry.h"
+#include "../dependency/DataServerEngine/include/entries/ts_def.h"
+#include "../dependency/DataServerEngine/include/servers/opc da/opc_server.h"
 //#include "PropertyFrame.h"
-#include "utils/variant.h"
-#include "utils/string_algorithm.h"
+#include "../dependency/DataServerEngine/include/utils/variant.h"
+#include "../dependency/DataServerEngine/include/utils/string_algorithm.h"
+
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -44,7 +47,7 @@ ServerTagBrowserCtrl::ServerTagBrowserCtrl(wxWindow* parent) :
 	Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( ServerTagBrowserCtrl::OnItemSelected ) );
 	Connect( wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK, wxListEventHandler( ServerTagBrowserCtrl::OnItemRigthClicked ) );
 	Connect( wxEVT_TIMER, wxTimerEventHandler( ServerTagBrowserCtrl::Refresh ) );
-	//Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( ServerBrowserCtrl::OnEraseBackground ) );
+	Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( ServerTagBrowserCtrl::OnEraseBackground ) );
 
 	refreshTimer_.Start(500);
 }
@@ -58,6 +61,8 @@ void ServerTagBrowserCtrl::Refresh(wxTimerEvent& event)
 {
 	if ( opcServer_.expired() )
 	{
+		allNames_.clear();
+		filtredNames_.clear();
 		DeleteAllItems();
 		return;
 	}
@@ -321,20 +326,20 @@ void OpcServerBrowserCtrl::view_OnItemSelected( const string_t& name )
 {
 	infoPanel_->GetSizer()->DeleteWindows();
 	OPCServerSPtr opcServer = projectMgr::getInstance().SharedOpcServer();
-	try
+	if ( opcServer->GetEntriesMgr().DstExist(name) )
 	{
 		Channels::EntryPtr entry = opcServer->GetEntriesMgr().GetEntryByDst(name);
-		wxString label = "Зависит от:\r\n";
 		infoPanel_->GetSizer()->Add(new wxStaticText(infoPanel_, wxID_ANY, wxT("Зависит от:")), 0, wxALL, 2);
 		BOOST_FOREACH(const string_t& src, entry->GetSrcList())
 		{
 			infoPanel_->GetSizer()->Add(new InfoCtrl(infoPanel_, src), 0, wxALL, 5);
 		}
 	}
-	catch (Channels::EntriesMgr::DstNotFound& exception)
+	else
 	{
 		infoPanel_->GetSizer()->Add(new wxStaticText(infoPanel_, wxID_ANY, wxT("Пусто")), 0, wxALL, 5);
 	}
+
 	infoPanel_->GetSizer()->Layout();
 }
 

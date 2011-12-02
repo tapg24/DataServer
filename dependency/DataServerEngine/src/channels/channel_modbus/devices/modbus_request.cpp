@@ -11,7 +11,7 @@ namespace Channels
 {
 	namespace Modbus
 	{
-		void ProcessData( const RequestRTU& request, boost::shared_ptr<StreamRTU>& stream, const bool swapEndian /* = false */ )
+		void ModbusRequest::ProcessData( const RequestRTU& request, boost::shared_ptr<StreamRTU>& stream, const bool swapEndian /* = false */ )
 		{
 			int32_t offset = 0;
 			BYTE buffer[MAX_BUFFER_SIZE] = {0};
@@ -111,7 +111,7 @@ namespace Channels
 			}
 		}
 
-		void DoRequest(const RequestRTU& request, boost::shared_ptr<StreamRTU>& stream)
+		void ModbusRequest::DoRequest(const RequestRTU& request, boost::shared_ptr<StreamRTU>& stream)
 		{
 			try
 			{

@@ -1,6 +1,7 @@
 #include "channels/channel_modbus/devices/generic_device.h"
 #include "core/project_mgr.h"
 #include "channels/cache_mgr.h"
+#include "channels/channel_modbus/modbus_rtu_stream.h"
 #include "utils/timer.hpp"
 #include <boost/foreach.hpp>
 
@@ -9,8 +10,8 @@ namespace Channels
 	namespace Modbus
 	{
 
-		GenericDevice::GenericDevice(boost::shared_ptr<Channel>& parent, const string_t& deviceId)
-			: DeviceBase(parent, deviceId)
+		GenericDevice::GenericDevice(ChannelWPtr parent, const string_t& deviceId)
+			: ModbusDeviceBase(parent, deviceId)
 		{
 			deviceStatus_ = 0;
 		}
@@ -20,7 +21,7 @@ namespace Channels
 
 		}
 
-		const std::vector<std::string> GenericDevice::GetRegistredTags() const
+		const std::vector<string_t> GenericDevice::GetRegistredTags() const
 		{
 			return tagNameArray_;
 		}
@@ -33,7 +34,7 @@ namespace Channels
 			{
 				CXTimer requestPerformance;
 
-				DoRequest(request, stream);
+				ModbusRequest::DoRequest(request, stream);
 
 				projectMgr::getInstance().GetCacheMgr()->GetItem(systemTags.request_time)->CopyFrom(OPC_QUALITY_GOOD, ComVariant(requestPerformance.GetElapsedSec()));
 			}

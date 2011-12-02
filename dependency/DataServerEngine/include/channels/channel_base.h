@@ -3,12 +3,14 @@
 
 #include "utils/types.h"
 #include "utils/string.h"
+#include "channels/cache_mgr_fwd.h"
+
+#include <OaIdl.h>
+#include <wtypes.h>
 
 #include <vector>
 #include <boost/thread.hpp>
 #include <boost/signals2.hpp>
-
-#include "cache_mgr.h"
 
 namespace Channels
 {
@@ -32,11 +34,23 @@ namespace Channels
 		Renamed
 	};
 
+	struct ChannelInfo
+	{
+		uint32_t id;
+		string_t name;
+		ChannelType type;
+		ChannelState state;
+
+		ChannelInfo(uint32_t idChannel, string_t nameChannel, ChannelType typeChannel, ChannelState stateChannel)
+			: id(idChannel), name(nameChannel), type(typeChannel), state(stateChannel)
+		{}
+	};
+
 	// forward declaration
 	class Channel;
 
 	// typedefs
-	typedef boost::signals2::signal< void(const uint32_t, const ChannelState) > StateSignal;
+	typedef boost::signals2::signal< void(const ChannelInfo) > StateSignal;
 	typedef StateSignal::slot_type StateSlot;
 
 	class Channel
@@ -52,13 +66,8 @@ namespace Channels
 		mutable boost::mutex itemGuard_;
 
 	protected:
-		Channel(const ChannelType type, const string_t& name, const unsigned long id = 0);
+		Channel(const ChannelType type, const string_t& name);
 		void StateChanged(const ChannelState& state);
-
-		void AddTag(const string_t& name, const VARTYPE type);
-		void AddTag(const string_t& name, const VARIANT& variant, const WORD quality);
-		void AddTag(const TagInfo& tag);
-		void AddTags(const TagInfoArray& tags);
 		void ResetCache();
 
 	public:
@@ -72,7 +81,8 @@ namespace Channels
 		void ReName( const string_t& name );
 		string_t GetName() const;
 		ChannelState GetState() const;
-		const std::vector<string_t> GetItemNames() const;
+		void AddTag( const string_t& name, const VARIANT& variant, const WORD quality );
+		const std::vector<string_t> GetTagNames() const;
 
 		boost::signals2::connection Bind(StateSlot callback);
 
@@ -82,7 +92,7 @@ namespace Channels
 	};
 
 	typedef boost::shared_ptr<Channel> ChannelPtr;
-	//typedef std::vector<ChannelPtr> 
+	typedef boost::weak_ptr<Channel> ChannelWPtr;
 }
 
 #endif // CHANNEL_BASE_H

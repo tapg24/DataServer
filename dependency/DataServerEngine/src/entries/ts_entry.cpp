@@ -13,44 +13,48 @@
 
 namespace Channels
 {
-	EntryTS::EntryTS( const string_t& ts_name, const Json::Value& convert )
+	EntryTS::EntryTS( const string_t& ts_name, const Json::Value& content )
 		: Entry(ts_name, TS_Type)
 	{
 		cmd_name_ = ts_name + "_CMD";
 
-		if ( !convert.isNull() )
+		if ( content.isNull() )
 		{
-			for ( size_t idx = 0; idx < convert.size(); ++idx )
+			return;
+		}
+
+		for ( size_t idx = 0; idx < content.size(); ++idx )
+		{
+			const Json::Value& item = content[idx];
+
+			const string_t src = item["src"].asString();
+
+			const Json::Value& states = item["states"];
+			for ( size_t idx = 0; idx < states.size(); ++idx )
 			{
-				const string_t src = convert[idx]["src"].asString();
-				const string_t type_conversion = convert[idx]["type"].asString();
-				if ( type_conversion == _STR("bit") )
+				const Json::Value& state = states[idx];
+
+				std::list<int8_t> set;
+				const Json::Value& bit_set = state["set"];
+				for ( size_t idx = 0; idx < bit_set.size(); ++idx )
 				{
-					const Json::Value states = convert[idx]["states"];
-					for ( size_t idx = 0; idx < states.size(); ++idx )
-					{
-						std::list<int8_t> set;
-						const Json::Value bit_set = states[idx]["set"];
-						for ( size_t idx = 0; idx < bit_set.size(); ++idx )
-						{
-							set.push_back( bit_set[idx].asInt() );
-						}
-
-						std::list<int8_t> unset;
-						const Json::Value bit_unset = states[idx]["unset"];
-						for ( size_t idx = 0; idx < bit_unset.size(); ++idx )
-						{
-							unset.push_back( bit_unset[idx].asInt() );
-						}
-
-						string_t stateName = states[idx]["state"].asString();
-
-						StateCheckerPtr checker( new BitChecker(stateName, set, unset) );
-						AddSrcChecker( src, checker );
-					}
+					set.push_back( bit_set[idx].asInt() );
 				}
+
+				std::list<int8_t> unset;
+				const Json::Value& bit_unset = state["unset"];
+				for ( size_t idx = 0; idx < bit_unset.size(); ++idx )
+				{
+					unset.push_back( bit_unset[idx].asInt() );
+				}
+
+				string_t stateName = state["state"].asString();
+
+				StateCheckerPtr checker( new BitChecker(stateName, set, unset) );
+				AddSrcChecker( src, checker );
 			}
 		}
+
 	}
 
 	EntryTS::~EntryTS()

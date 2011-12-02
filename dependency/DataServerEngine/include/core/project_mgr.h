@@ -29,8 +29,8 @@ namespace Core
 
 		Signal updateBinding_;
 
-		CacheMgrAPtr cacheMgr_;
-		ChannelMgrAPtr channelMgr_;
+		CacheMgrPtr cacheMgr_;
+		ChannelMgrPtr channelMgr_;
 		OPCServerSPtr serverThread_;
 
 	public:

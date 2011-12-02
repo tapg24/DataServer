@@ -1,3 +1,4 @@
+#include "../dependency/DataServerEngine/include/utils/string.h"
 #include "../dependency/DataServerEngine/include/core/project_mgr.h"
 #include "channel_tree_ctrl.h"
 #include "channel_view_ctrl.h"
@@ -102,6 +103,7 @@ MainFrame::~MainFrame()
 
 void MainFrame::OnExitClicked( wxCommandEvent& event )
 {
+	projectMgr::getInstance().CloseProject();
 	this->Close(false);
 }
 
@@ -126,7 +128,7 @@ void MainFrame::OnLoadProjectClicked( wxCommandEvent& event )
 	wxFileDialog openFileDialog(this, wxT("Open file"), "", "", wxT("DataServer project|*.ds"), wxOPEN, wxDefaultPosition);
 	if ( openFileDialog.ShowModal() == wxID_OK )
 	{
-		projectMgr::getInstance().LoadProject(openFileDialog.GetFilename().mb_str());
+		projectMgr::getInstance().LoadProject(openFileDialog.GetPath().mb_str());
 	}
 }
 
@@ -140,7 +142,7 @@ void MainFrame::UpdateUIBinding()
 {
 	channelsTreeCtrl_->UpdateBinding();
 	OpcServerBrowserCtrl_->UpdateBinding();
-	std::string label = projectMgr::getInstance().ProjectName() + " - Сервер сбора данных";
+	string_t label = projectMgr::getInstance().ProjectName() + " - Сервер сбора данных";
 	this->SetLabel(label);
 }
 
@@ -155,12 +157,10 @@ void MainFrame::LoadDefaultProject()
 		wxString msg = exception.getFullDescription();
 		BOOST_LOG_TRIVIAL(error) << msg.c_str();
 		wxMessageBox(msg, "Exception");
-		//return false;
 	}
 	catch (...)
 	{
 		BOOST_LOG_TRIVIAL(error) << "unhadled exception";
 		wxMessageBox("unhadled exception", "unhadled exception");
-		//return false;
 	}
 }

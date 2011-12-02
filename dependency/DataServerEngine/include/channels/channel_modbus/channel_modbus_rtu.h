@@ -6,12 +6,14 @@
 #include "modbus_rtu_nport.h"
 //#include "modbus_rtu_serial.h"
 #include "devices/modbus_request.h"
-
 #include "devices/modbus_device_base.h"
 #include "devices/modbus_device_factory.h"
-
+#include "channels/cache_mgr_fwd.h"
 #include "utils/timer.hpp"
+#include "utils/event.h"
+
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 namespace Channels
 {
@@ -24,6 +26,7 @@ namespace Channels
 		class ModbusRTU : public Channel
 		{
 			friend class ChannelMgr;
+			typedef std::vector<DevicePtr> DeviceContainer;
 
 			boost::thread streamThread_;
 			bool streamThreadStoped_;
@@ -62,7 +65,7 @@ namespace Channels
 			// this channel interface
 			//////////////////////////////////////////////////////////////////////////
 			
-			void AddDevice( const Device& device );
+			void AddDevice( const DevicePtr& device );
 
 		private:
 			void WatchThread();
@@ -70,6 +73,9 @@ namespace Channels
 			void StreamThread();
 			void StopStreamThread();
 		};
+
+		typedef boost::shared_ptr<ModbusRTU> ModbusRTUSPtr;
+		typedef boost::weak_ptr<ModbusRTU> ModbusRTUWPtr;
 	}
 }
 

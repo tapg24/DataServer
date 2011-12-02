@@ -1,6 +1,9 @@
 #include "channels/channel_opc/channel_opc.h"
 #include "core/project_mgr.h"
+#include "channels/channel_mgr.h"
+#include "channels/cache_mgr.h"
 #include "../../frl/include/frl_exception.h"
+#include "utils/variant.h"
 
 //////////////////////////////////////////////////////////////////////////
 // OPC Client Library
@@ -27,7 +30,7 @@ namespace Channels
 			connected_ = false;
 
 			systemTags.channelAlive = name + ".alive";
-			Channel::AddTag(systemTags.channelAlive, 11);
+			Channel::AddTag(systemTags.channelAlive, ComVariant(bool(false)), OPC_QUALITY_GOOD);
 
 			StateChanged(Created);
 			
@@ -42,7 +45,7 @@ namespace Channels
 			StateChanged(Deleted);
 
 			if ( checkThread_ ) checkThread_->join();
-			if ( reastartThread_ ) reastartThread_->join();
+			if ( restartThread_ ) restartThread_->join();
 
 			boost::packaged_task<void> task( &COPCClient::uninit );
 			ActiveObject::post_task<void>(boost::move(task)).wait();
@@ -131,7 +134,7 @@ namespace Channels
 			{
 				StateChanged(Disconnected);
 				ResetCache();
-				DeleteItems(Channel::GetItemNames());
+				DeleteItems(Channel::GetTagNames());
 				DeleteGroups(m_groupNameVector);
 				opcServer_.reset();
 				connected_ = false;
@@ -376,7 +379,7 @@ namespace Channels
 					Stop();
 					BOOST_LOG_TRIVIAL(trace) << GetName() << ". Server not alive.";
 					doRestart_ = true;
-					reastartThread_.reset( new boost::thread(&ChannelOPC::RestartThread, this) );
+					restartThread_.reset( new boost::thread(&ChannelOPC::RestartThread, this) );
 					return;
 				}
 
@@ -402,7 +405,7 @@ namespace Channels
 			Start();
 			if ( !connected_)
 			{
-				reastartThread_.reset( new boost::thread(&ChannelOPC::RestartThread, this) );
+				restartThread_.reset( new boost::thread(&ChannelOPC::RestartThread, this) );
 			}
 			return;
 		}

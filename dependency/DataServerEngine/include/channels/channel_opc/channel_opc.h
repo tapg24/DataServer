@@ -3,6 +3,9 @@
 
 #include "utils/types.h"
 #include "utils/string.h"
+#include "utils/active_object.hpp"
+#include "channels/channel_base.h"
+
 #include <vector>
 #include <set>
 #include <map>
@@ -11,9 +14,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/noncopyable.hpp>
-
-#include "channels/channel_base.h"
-#include "utils/active_object.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 //// OPC Client Library
@@ -56,7 +56,7 @@ namespace Channels
 			} systemTags;
 
 			boost::shared_ptr<boost::thread> checkThread_;
-			boost::shared_ptr<boost::thread> reastartThread_;
+			boost::shared_ptr<boost::thread> restartThread_;
 			boost::mutex update_;
 			boost::mutex access_;
 			bool checkKeepAlive_;
@@ -106,7 +106,8 @@ namespace Channels
 
 	}
 
-	typedef boost::shared_ptr<Channels::OPC::ChannelOPC> ChannelOPCPtr;
+	typedef boost::shared_ptr<Channels::OPC::ChannelOPC> ChannelOPCSPtr;
+	typedef boost::weak_ptr<Channels::OPC::ChannelOPC> ChannelOPCWPtr;
 }
 
 #endif // CHANNEL_OPC_H

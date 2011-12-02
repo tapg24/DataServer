@@ -1,4 +1,5 @@
 #include "channels/channel_base.h"
+#include "channels/cache_mgr.h"
 #include "core/project_mgr.h"
 #include "utils/id_mgr.h"
 #include <boost/foreach.hpp>
@@ -6,7 +7,7 @@
 namespace Channels
 {
 
-	Channel::Channel( const ChannelType type,  const string_t& name, const uint32_t id /*= 0*/ )
+	Channel::Channel( const ChannelType type,  const string_t& name )
 		: type_(type), name_(name), state_(Created)
 	{
 		id_ = idGenerator::getInstance().Generate();
@@ -62,48 +63,19 @@ namespace Channels
 		if ( state != state_ )
 		{
 			state_ = state;
-			onStateChange_(id_, state_);
+			onStateChange_( ChannelInfo(id_, name_, type_, state_) );
 		}
-	}
-
-	void Channel::AddTag(const string_t& name, const VARTYPE type)
-	{
-		boost::mutex::scoped_lock lock(itemGuard_);
-
-		projectMgr::getInstance().GetCacheMgr()->InsertItem(name, type);
-		itemsName_.push_back(name);
-
-		std::sort( itemsName_.begin(), itemsName_.end() );
-		itemsName_.erase(std::unique(itemsName_.begin(), itemsName_.end()), itemsName_.end());
 	}
 
 	void Channel::AddTag( const string_t& name, const VARIANT& variant, const WORD quality )
 	{
 		boost::mutex::scoped_lock lock(itemGuard_);
 
-		projectMgr::getInstance().GetCacheMgr()->InsertItem(name, variant, quality);
-		itemsName_.push_back(name);
 
-		std::sort( itemsName_.begin(), itemsName_.end() );
-		itemsName_.erase(std::unique(itemsName_.begin(), itemsName_.end()), itemsName_.end());
-	}
-
-	void Channel::AddTag( const TagInfo& tag )
-	{
-		boost::mutex::scoped_lock lock(itemGuard_);
-
-		projectMgr::getInstance().GetCacheMgr()->InsertItem(tag);
-		itemsName_.push_back(tag.name_);
-
-		std::sort( itemsName_.begin(), itemsName_.end() );
-		itemsName_.erase(std::unique(itemsName_.begin(), itemsName_.end()), itemsName_.end());
-	}
-
-	void Channel::AddTags( const TagInfoArray& tags )
-	{
-		BOOST_FOREACH(const TagInfo& tag, tags)
+		if ( !projectMgr::getInstance().GetCacheMgr()->ItemExist(name) )
 		{
-			AddTag(tag);
+			projectMgr::getInstance().GetCacheMgr()->InsertItem(name, variant, quality);
+			itemsName_.push_back(name);
 		}
 	}
 
@@ -115,11 +87,9 @@ namespace Channels
 		{
 			projectMgr::getInstance().GetCacheMgr()->GetItem(itemName)->Reset();
 		}
-
-		//projectMgr::getInstance().CacheMgr()->NotifyAll();
 	}
 
-	const std::vector<string_t> Channel::GetItemNames() const
+	const std::vector<string_t> Channel::GetTagNames() const
 	{
 		boost::mutex::scoped_lock lock(itemGuard_);
 
@@ -128,7 +98,7 @@ namespace Channels
 
 	boost::signals2::connection Channel::Bind( StateSlot callback )
 	{
-		callback(id_, state_);
+		callback( ChannelInfo(id_, name_, type_, state_) );
 		return onStateChange_.connect(callback);
 	}
 

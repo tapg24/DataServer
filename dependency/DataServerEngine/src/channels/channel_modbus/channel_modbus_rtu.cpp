@@ -1,11 +1,11 @@
 #include "channels/channel_modbus/channel_modbus_rtu.h"
-//#include "channels/channel_mgr.h"
-//#include "channels/cache_mgr.h"
-#include "core/project_mgr.h"
 #include "channels/channel_modbus/modbus_except.hpp"
+#include "core/project_mgr.h"
+#include "channels/cache_mgr.h"
+#include "utils/variant.h"
+
 #include <boost/foreach.hpp>
 #include <boost/log/trivial.hpp>
-//#include <boost/filesystem.hpp>
 
 namespace Channels
 {
@@ -19,9 +19,9 @@ namespace Channels
 			streamThreadStoped_ = true;
 
 			systemTags.cycleTime = name + ".system.cycle_time";
-			Channel::AddTag(systemTags.cycleTime, 5);
+			Channel::AddTag(systemTags.cycleTime, ComVariant(double(0)), OPC_QUALITY_GOOD);
 			systemTags.channelAlive = name + ".alive";
-			Channel::AddTag(systemTags.channelAlive, 11);
+			Channel::AddTag(systemTags.channelAlive, ComVariant(bool(false)), OPC_QUALITY_GOOD);
 
 			StateChanged(Created);
 		}
@@ -96,7 +96,7 @@ namespace Channels
 					projectMgr::getInstance().GetCacheMgr()->GetItem(systemTags.cycleTime)->CopyFrom(OPC_QUALITY_GOOD, ComVariant(cyclePerformance.GetElapsedSec()));
 					cyclePerformance.Reset();
 
-					BOOST_FOREACH(Device& device, devices_)
+					BOOST_FOREACH(DevicePtr& device, devices_)
 					{
 						try
 						{
@@ -149,10 +149,9 @@ namespace Channels
 		}
 
 
-		void ModbusRTU::AddDevice( const Device& device )
+		void ModbusRTU::AddDevice( const DevicePtr& device )
 		{
 			devices_.push_back(device);
-			Channel::AddTags(device->GetTags());
 		}
 	}
 

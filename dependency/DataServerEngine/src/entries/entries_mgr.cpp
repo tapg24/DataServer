@@ -17,6 +17,11 @@ namespace Channels
 
 	void EntriesMgr::AddEntry( EntryPtr entry )
 	{
+		if ( entry->GetType() == NullEntry_Type )
+		{
+			return;
+		}
+
 		entries_.insert( std::make_pair(entry->GetName(), entry) );
 		BOOST_FOREACH(const string_t& src, entry->GetSrcList())
 		{

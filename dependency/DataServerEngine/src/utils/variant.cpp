@@ -3,9 +3,8 @@
 #include <boost/assert.hpp>
 #include <../../opc_foundation/opcda.h>
 
-namespace Channels
-{
-	std::string TypeAsString(VARTYPE vt)
+
+	string_t TypeAsString(VARTYPE vt)
 	{
 		switch (vt)
 		{
@@ -307,7 +306,7 @@ namespace Channels
 		*this = cValue;
 	}
 
-	ComVariant::ComVariant( const std::string& cValue )
+	ComVariant::ComVariant( const string_t& cValue )
 	{
 		init();
 		*this = cValue;
@@ -511,7 +510,7 @@ namespace Channels
 		return *this;
 	}
 
-	ComVariant& ComVariant::operator=( const std::string& rVal )
+	ComVariant& ComVariant::operator=( const string_t& rVal )
 	{
 		clear();
 		value.vt = VT_BSTR;
@@ -627,7 +626,7 @@ namespace Channels
 	//	return ft;
 	//}
 
-	//Variant::operator std::string() const
+	//Variant::operator string_t() const
 	//{
 	//	BOOST_ASSERT( value.vt == VT_BSTR );
 
@@ -702,7 +701,7 @@ namespace Channels
 		return ComVariant::variantCopy( dst, &value );
 	}
 
-	std::string ComVariant::valueAsString() const
+	string_t ComVariant::valueAsString() const
 	{
 		if (value.vt != VT_BSTR)
 		{
@@ -715,96 +714,96 @@ namespace Channels
 		return narrow(value.bstrVal);
 	}
 
-	std::string ComVariant::typeAsString() const
+	string_t ComVariant::typeAsString() const
 	{
 		return TypeAsString(value.vt);
 	}
 
-	bool ComVariant::AsBool()
+	bool ComVariant::AsBool() const
 	{
 		BOOST_ASSERT( value.vt == VT_BOOL );
 		return ( value.boolVal ) ? true : false;
 	}
 
-	char ComVariant::AsChar()
+	char ComVariant::AsChar() const
 	{
 		BOOST_ASSERT( value.vt == VT_I1 );
 		return value.cVal;
 	}
 
-	unsigned char ComVariant::AsUChar()
+	unsigned char ComVariant::AsUChar() const
 	{
 		BOOST_ASSERT( value.vt == VT_UI1 );
 		return value.bVal;
 	}
 
-	short ComVariant::AsShort()
+	short ComVariant::AsShort() const
 	{
 		BOOST_ASSERT( value.vt == VT_I2 );
 		return value.iVal;
 	}
 
-	unsigned short ComVariant::AsUShort()
+	unsigned short ComVariant::AsUShort() const
 	{
 		BOOST_ASSERT( value.vt == VT_UI2 );
 		return value.uiVal;
 	}
 
-	int ComVariant::AsInt()
+	int ComVariant::AsInt() const
 	{
 		BOOST_ASSERT( value.vt == VT_I4 );
 		return value.lVal;
 	}
 
-	unsigned int ComVariant::AsUInt()
+	unsigned int ComVariant::AsUInt() const
 	{
 		BOOST_ASSERT( value.vt == VT_UI4 );
 		return ( unsigned int )value.ullVal;
 	}
 
-	long ComVariant::AsLong()
+	long ComVariant::AsLong() const
 	{
 		BOOST_ASSERT( value.vt == VT_I4 );
 		return value.lVal;
 	}
 
-	unsigned long ComVariant::AsULong()
+	unsigned long ComVariant::AsULong() const
 	{
 		BOOST_ASSERT( value.vt == VT_UI4 );
 		return value.ulVal;
 	}
 
-	long long ComVariant::AsLongLong()
+	long long ComVariant::AsLongLong() const
 	{
 		BOOST_ASSERT( value.vt == VT_I8 );
 		return value.llVal;
 	}
 
-	unsigned long long ComVariant::AsULongLong()
+	unsigned long long ComVariant::AsULongLong() const
 	{
 		BOOST_ASSERT( value.vt == VT_UI8 );
 		return value.ullVal;
 	}
 
-	float ComVariant::AsFloat()
+	float ComVariant::AsFloat() const
 	{
 		BOOST_ASSERT( value.vt == VT_R4 );
 		return value.fltVal;
 	}
 
-	double ComVariant::AsDouble()
+	double ComVariant::AsDouble() const
 	{
 		BOOST_ASSERT( value.vt == VT_R8 );
 		return value.dblVal;
 	}
 
-	CY ComVariant::AsCY()
+	CY ComVariant::AsCY() const
 	{
 		BOOST_ASSERT( value.vt == VT_CY );
 		return value.cyVal;
 	}
 
-	FILETIME ComVariant::AsFILETIME()
+	FILETIME ComVariant::AsFILETIME() const
 	{
 		BOOST_ASSERT( value.vt == VT_DATE );
 
@@ -817,7 +816,7 @@ namespace Channels
 		return ft;
 	}
 
-	std::string ComVariant::AsString()
+	string_t ComVariant::AsString() const
 	{
 		BOOST_ASSERT( value.vt == VT_BSTR );
 
@@ -827,5 +826,3 @@ namespace Channels
 			return narrow( value.bstrVal );
 		#endif
 	}
-
-}

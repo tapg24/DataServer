@@ -2,12 +2,15 @@
 #define CHANNEL_VIEW_CTRL
 
 #include "channels/cache_item.h"
+#include "channels/channel_mgr_fwd.h"
+#include "channels/cache_mgr_fwd.h"
 
 #include "utils/types.h"
 
 #include <string>
 #include <vector>
 
+#include <wx/wx.h>
 #include <wx/frame.h>
 #include <wx/listctrl.h>
 #include <wx/timer.h>
@@ -26,7 +29,10 @@ public:
 	void Switch(const int id);
 	void ChannelViewCtrl::Refresh(wxTimerEvent& event);
 	wxString ChannelViewCtrl::OnGetItemText(long item, long column) const;
+
 private:
+	void OnEraseBackground(wxEraseEvent & event);
+
 	int m_channelId;
 	std::vector<std::string> m_itemNames;
 	wxTimer m_timerRefresh;

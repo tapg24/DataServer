@@ -117,6 +117,7 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="true"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				DisableLanguageExtensions="true"
 				ForceConformanceInForLoopScope="false"

@@ -11,7 +11,7 @@ namespace Channels
 {
 	namespace Modbus
 	{
-		class Sirius2 : public DeviceBase
+		class Sirius2 : public ModbusDeviceBase
 		{
 			// информация об устройстве
 			std::string deviceId_;

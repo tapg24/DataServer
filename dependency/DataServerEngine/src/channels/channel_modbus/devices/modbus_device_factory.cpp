@@ -1,110 +1,86 @@
 #include "channels/channel_modbus/devices/modbus_device_factory.h"
-#include "channels/channel_modbus/devices/modbus_device_def.h"
-#include "channels/channel_modbus/devices/generic_device.h"
-#include "channels/channel_modbus/devices/radius/sirius2old_device.h"
-#include "channels/channel_modbus/devices/radius/sirius2_device.h"
 
+// radius
+// sirius
+#include "channels/channel_modbus/devices/radius/sirius2c.h"
+#include "channels/channel_modbus/devices/radius/sirius2tn.h"
+#include "channels/channel_modbus/devices/radius/sirius2yv.h"
+#include "channels/channel_modbus/devices/radius/sirius2v.h"
+#include "channels/channel_modbus/devices/radius/sirius2ml.h"
+#include "channels/channel_modbus/devices/radius/sirius2d.h"
+
+#include "utils/types.h"
 #include "utils/wxzip.h"
 #include "utils/path.h"
+
+#include <boost/lexical_cast.hpp>
+#include <boost/make_shared.hpp>
 
 namespace Channels
 {
 	namespace Modbus
 	{
-		Device CreateDevice( boost::shared_ptr<Channel>& parent, const Json::Value& jsonValue )
+		DevicePtr DeviceFactory::Create( ChannelWPtr parent, const Json::Value& jsonValue )
 		{
-			//string_t dump = jsonValue.toStyledString();
+			string_t dump = jsonValue.toStyledString();
 
-			Json::Reader reader;
+			const string_t vendor = jsonValue["vendor"].asString();
+			const int32_t type = jsonValue["type"].asInt();
+			const string_t deviceId = jsonValue["device_id"].asString();
+			const int32_t serialId = jsonValue["serial_id"].asInt();
+			const int32_t modbusId = jsonValue["modbus_id"].asInt();
 
-			boost::filesystem::path template_path = Util::GetModulePath() / "templates.dst";
-			string_t deviceInfo = Util::Zip::GetEntry(template_path.string(), jsonValue["template"].asString());
-			Json::Value jsonDevice = jsonValue;
-			Json::Value jsonDevicesInfo;
-			if (reader.parse(deviceInfo, jsonDevicesInfo))
+			if ( vendor == "radius" )
 			{
-				jsonDevice["device_info"] = jsonDevicesInfo;
-			}
-
-			const int family = jsonDevice["device_info"]["family"].asInt();
-			switch ( family )
-			{
-			case Devices::Sirius2Old :
+				if ( type == 107 ) // Сириус-2-ТН
 				{
-					const string_t deviceId = jsonDevice["device_id"].asString();
-					const int serialId = jsonDevice["serial_id"].asInt();
-					const int modbusId = jsonDevice["modbus_id"].asInt();
-					const int type = jsonDevice["device_info"]["type"].asInt();
-					const bool calc = jsonDevice["device_info"]["calculate_param"].asBool();
-					// теги, которые использует устройство
-					TagInfoArray deviceTags;
-
-					boost::shared_ptr<Sirius2Old> sirius( new Sirius2Old(parent, deviceId, type, serialId, modbusId, calc) );
-
-					// запрос идентификации
-					RequestRTU identRequest;
-					identRequest.station = modbusId;
-					identRequest.func = jsonDevice["device_info"]["identity_request"]["function"].asInt();
-					identRequest.startAdress = jsonDevice["device_info"]["identity_request"]["address"].asInt();
-					identRequest.byteCount = jsonDevice["device_info"]["identity_request"]["byte_count"].asInt();
-
-					const Json::Value& identTags = jsonDevice["device_info"]["identity_request"]["tags"];
-					for ( size_t idx = 0; idx < identTags.size(); ++idx )
-					{
-						//string_t dump = identTags[idx].toStyledString();
-
-						string_t name = deviceId + "." + identTags[idx]["name"].asString();
-						TagInfo tag(name, identTags[idx]["type"].asInt());
-
-						identRequest.tags.push_back(tag);
-						deviceTags.push_back(tag);
-					}
-					sirius->SetIdentityRequest(identRequest);
-
-					// запрос данных
-					const Json::Value& requests = jsonDevice["device_info"]["requests"];
-					for ( size_t idx = 0; idx < requests.size(); ++idx )
-					{
-						RequestRTU request;
-						request.station = modbusId;
-						request.func = requests[idx]["function"].asInt();
-						request.startAdress = requests[idx]["address"].asInt();
-						request.byteCount = requests[idx]["byte_count"].asInt();
-
-						const Json::Value& tags = requests[idx]["tags"];
-						for ( size_t idx = 0; idx < tags.size(); ++idx )
-						{
-							//const string_t dump = tags[idx].toStyledString();
-
-							string_t name = deviceId + "." + tags[idx]["name"].asString();
-							TagInfo tag(name, tags[idx]["type"].asInt());
-
-							request.tags.push_back(tag);
-							deviceTags.push_back(tag);
-						}
-
-						sirius->AddRequest(request);
-					}
-
-					// теги, которые необходимо расчитать
-					const Json::Value& calc_tags = jsonDevice["device_info"]["calculated_tags"];
-					for ( size_t idx = 0; idx < calc_tags.size(); ++idx )
-					{
-						string_t name = deviceId + "." + calc_tags[idx]["name"].asString();
-						TagInfo tag(name, calc_tags[idx]["type"].asInt());
-						deviceTags.push_back(tag);
-					}
-
-					sirius->AddTags(deviceTags);
-
-					return sirius;
+					const int32_t primeVoltage = jsonValue["prime_voltage"].asInt();
+					const int32_t secondVoltage = jsonValue["second_voltage"].asInt();
+					return boost::make_shared<Sirius2TN>(parent, deviceId, type, serialId, modbusId, primeVoltage, secondVoltage);
 				}
-			//case Devices::Sirius2 :
-			//	return Device(new Sirius2());
-			default:
-				return Device(new GenericDevice(parent, ""));
+				else if ( type == 93 ) // Сириус-2-УВ
+				{
+					const int32_t primeVoltage = jsonValue["prime_voltage"].asInt();
+					const int32_t secondVoltage = jsonValue["second_voltage"].asInt();
+					const int32_t primeCurrent = jsonValue["prime_current"].asInt();
+					const int32_t secondCurrent = jsonValue["second_current"].asInt();
+					return boost::make_shared<Sirius2YV>(parent, deviceId, type, serialId, modbusId, primeCurrent, secondCurrent, primeVoltage, secondVoltage);
+				}
+				else if ( type == 99 ) // Сириус-2-В
+				{
+					const int32_t primeVoltage = jsonValue["prime_voltage"].asInt();
+					const int32_t secondVoltage = jsonValue["second_voltage"].asInt();
+					const int32_t primeCurrent = jsonValue["prime_current"].asInt();
+					const int32_t secondCurrent = jsonValue["second_current"].asInt();
+					return boost::make_shared<Sirius2V>(parent, deviceId, type, serialId, modbusId, primeCurrent, secondCurrent, primeVoltage, secondVoltage);
+				}
+				else if ( type == 98 ) // Сириус-2-С
+				{
+					const int32_t primeCurrent = jsonValue["prime_current"].asInt();
+					const int32_t secondCurrent = jsonValue["second_current"].asInt();
+					return boost::make_shared<Sirius2C>(parent, deviceId, type, serialId, modbusId, primeCurrent, secondCurrent);
+				}
+				else if ( type == 100 ) // Сириус-2-МЛ
+				{
+					const int32_t primeVoltage = jsonValue["prime_voltage"].asInt();
+					const int32_t secondVoltage = jsonValue["second_voltage"].asInt();
+					const int32_t primeCurrent = jsonValue["prime_current"].asInt();
+					const int32_t secondCurrent = jsonValue["second_current"].asInt();
+					return boost::make_shared<Sirius2ML>(parent, deviceId, type, serialId, modbusId, primeCurrent, secondCurrent, primeVoltage, secondVoltage);
+				}
+				else if ( type == 102 ) // Сириус-2-Д
+				{
+					const int32_t primeVoltage = jsonValue["prime_voltage"].asInt();
+					const int32_t secondVoltage = jsonValue["second_voltage"].asInt();
+					const int32_t primeCurrent = jsonValue["prime_current"].asInt();
+					const int32_t secondCurrent = jsonValue["second_current"].asInt();
+					return boost::make_shared<Sirius2D>(parent, deviceId, type, serialId, modbusId, primeCurrent, secondCurrent, primeVoltage, secondVoltage);
+				}
+				else
+				{
+					FRL_THROW_CLASS(TypeNotValid, boost::lexical_cast<string_t>(type));
+				}
 			}
 		}
-
 	}
 }

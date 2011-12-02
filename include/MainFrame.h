@@ -2,6 +2,7 @@
 #define MAIN_FRAME_H_
 
 #include <wx/wx.h>
+
 #include <boost/signals2.hpp>
 
 class ChannelTreeCtrl;

@@ -100,8 +100,8 @@ Global
 		{011DCF98-7069-40A6-8B54-45D20B39B4B8} = {A29650AC-D2EC-40D1-AB5D-99848A250A21}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		AMDCaProjectFile = D:\vs_proj\OPCTransformTunnel\build_tools\mvs9\CodeAnalyst\DataServer.caw
-		AMDCaPersistentStartup = DataServer
 		AMDCaPersistentConfig = Debug|Win32
+		AMDCaPersistentStartup = DataServer
+		AMDCaProjectFile = D:\vs_proj\OPCTransformTunnel\build_tools\mvs9\CodeAnalyst\DataServer.caw
 	EndGlobalSection
 EndGlobal
